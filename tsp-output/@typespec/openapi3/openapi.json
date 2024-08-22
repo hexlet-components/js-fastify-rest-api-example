@@ -9,7 +9,18 @@
     "/users": {
       "get": {
         "operationId": "users_index",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "default": 1
+            },
+            "explode": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "The request has succeeded.",

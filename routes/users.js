@@ -11,8 +11,19 @@ export default async function (fastify) {
 
   fastify.get(
     '/users',
-    async function () {
-      const users = await db.query.users.findMany()
+    {
+      schema: {
+        querystring: schema['/users'].GET.args.properties.query,
+      },
+    },
+    async function (request) {
+      const perPage = 10
+      const users = await db.query
+        .users
+        .findMany({
+          limit: (perPage),
+          offset: (request.query.page - 1) * perPage,
+        })
 
       return users
     })

@@ -29,7 +29,7 @@ model User {
 @route("/users")
 namespace users {
   @get
-  op index(): {
+  op index(@query page?: numeric = 1): {
     @body users: {
       data: User[];
     };

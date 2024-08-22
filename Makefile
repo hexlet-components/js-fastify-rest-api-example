@@ -19,6 +19,8 @@ types-to-openapi:
 types-to-typebox:
 	npx openapi-box ./tsp-output/@typespec/openapi3/openapi.json
 
+types: types-to-openapi types-to-typebox
+
 tsp-build:
 
 .PHONY: test

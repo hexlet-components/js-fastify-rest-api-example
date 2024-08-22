@@ -103,7 +103,15 @@ const ComponentsSchemasNotFoundError = T.Object({
 const schema = {
   '/users': {
     GET: {
-      args: T.Void(),
+      args: T.Optional(
+        T.Object({
+          query: T.Optional(
+            T.Object({
+              page: T.Optional(T.Number({ default: 1, 'x-in': 'query' }))
+            })
+          )
+        })
+      ),
       data: T.Object(
         {
           data: T.Array(CloneType(ComponentsSchemasUser))
