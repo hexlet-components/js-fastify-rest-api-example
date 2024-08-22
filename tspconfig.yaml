@@ -1,0 +1,9 @@
+emit:
+  - "@typespec/openapi3"
+  - "@typespec/json-schema"
+
+options:
+  "@typespec/openapi3":
+    file-type: json
+  "@typespec/json-schema":
+    file-type: json

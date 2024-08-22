@@ -1,5 +1,8 @@
-export default async function (fastify, opts) {
-  fastify.get('/', async function (request, reply) {
+export default async function (fastify) {
+  fastify.get('/', async function () {
     return { root: true }
+  })
+  fastify.get('/about', async function () {
+    return 'Hexlet project'
   })
 }

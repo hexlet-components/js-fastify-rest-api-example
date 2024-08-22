@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noImplicitAny": false,
+    "checkJs": true,
+    "strict": true,
+    "noEmit": true,
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "noUnusedParameters": true
+  },
+  "include": [
+    "**/*",
+  ],
+}
