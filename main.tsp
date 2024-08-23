@@ -10,13 +10,20 @@ using TypeSpec.JsonSchema;
   title: "Fastify Rest Api Example",
 })
 @server("https://code-basics.com", "Single server endpoint")
-
 @jsonSchema
 namespace FastifyRestApiExample;
 
 @error
 model NotFoundError {
+  @statusCode _: 404;
   code: "NOT_FOUND";
+  message: string;
+}
+
+@error
+model UnprocessableEntityError {
+  @statusCode _: 422;
+  code: "UNPROCESSABLE_ENTITY";
   message: string;
 }
 
@@ -38,7 +45,20 @@ namespace users {
   @get
   op show(@path id: numeric): {
     @body user: User;
-  } | {
-    @body error: NotFoundError;
-  };
+  } | NotFoundError;
+
+  @post
+  op create(@body user: User): {
+    @statusCode statusCode: 201;
+  } | UnprocessableEntityError;
+
+  @patch
+  op update(@path id: numeric, @body user: User): {
+    @body user: User;
+  } | NotFoundError | UnprocessableEntityError;
+
+  @delete
+  op destroy(@path id: numeric): {
+    @statusCode statusCode: 204;
+  } | NotFoundError;
 }

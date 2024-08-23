@@ -95,9 +95,18 @@ const ComponentsSchemasUser = T.Object({
   fullName: T.String(),
   phone: T.String()
 })
+const ComponentsSchemasUnprocessableEntityError = T.Object({
+  code: T.Literal('UNPROCESSABLE_ENTITY'),
+  message: T.String()
+})
 const ComponentsSchemasNotFoundError = T.Object({
   code: T.Literal('NOT_FOUND'),
   message: T.String()
+})
+const ComponentsSchemasUserUpdate = T.Object({
+  id: T.Optional(T.Number()),
+  fullName: T.Optional(T.String()),
+  phone: T.Optional(T.String())
 })
 
 const schema = {
@@ -122,6 +131,20 @@ const schema = {
         }
       ),
       error: T.Union([T.Any({ 'x-status-code': 'default' })])
+    },
+    POST: {
+      args: T.Object({
+        body: CloneType(ComponentsSchemasUser, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: T.Any({ 'x-status-code': '201' }),
+      error: T.Union([
+        CloneType(ComponentsSchemasUnprocessableEntityError, {
+          'x-status-code': '422',
+          'x-content-type': 'application/json'
+        })
+      ])
     }
   },
   '/users/{id}': {
@@ -131,14 +154,54 @@ const schema = {
           id: T.Number({ 'x-in': 'path' })
         })
       }),
-      data: T.Union(
-        [
-          CloneType(ComponentsSchemasUser),
-          CloneType(ComponentsSchemasNotFoundError)
-        ],
-        { 'x-status-code': '200', 'x-content-type': 'application/json' }
-      ),
-      error: T.Union([T.Any({ 'x-status-code': 'default' })])
+      data: CloneType(ComponentsSchemasUser, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasNotFoundError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/json'
+        })
+      ])
+    },
+    PATCH: {
+      args: T.Object({
+        params: T.Object({
+          id: T.Number({ 'x-in': 'path' })
+        }),
+        body: CloneType(ComponentsSchemasUserUpdate, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: CloneType(ComponentsSchemasUser, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasNotFoundError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/json'
+        }),
+        CloneType(ComponentsSchemasUnprocessableEntityError, {
+          'x-status-code': '422',
+          'x-content-type': 'application/json'
+        })
+      ])
+    },
+    DELETE: {
+      args: T.Object({
+        params: T.Object({
+          id: T.Number({ 'x-in': 'path' })
+        })
+      }),
+      data: T.Any({ 'x-status-code': '204' }),
+      error: T.Union([
+        CloneType(ComponentsSchemasNotFoundError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/json'
+        })
+      ])
     }
   }
 }
@@ -146,7 +209,11 @@ const schema = {
 const _components = {
   schemas: {
     NotFoundError: CloneType(ComponentsSchemasNotFoundError),
-    User: CloneType(ComponentsSchemasUser)
+    UnprocessableEntityError: CloneType(
+      ComponentsSchemasUnprocessableEntityError
+    ),
+    User: CloneType(ComponentsSchemasUser),
+    UserUpdate: CloneType(ComponentsSchemasUserUpdate)
   }
 }
 
