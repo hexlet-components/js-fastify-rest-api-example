@@ -18,11 +18,12 @@ export default async function (fastify) {
     },
     async function (request) {
       const perPage = 10
+      const { page = 1 } = request.query
       const users = await db.query
         .users
         .findMany({
           limit: (perPage),
-          offset: (request.query.page - 1) * perPage,
+          offset: (page - 1) * perPage,
         })
 
       return users
