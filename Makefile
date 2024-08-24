@@ -4,6 +4,12 @@ test:
 dev:
 	npm run dev
 
+check-types:
+	npx tsc
+
+routes:
+	npx fastify print-routes routes/users.js
+
 migration-generate:
 	npx drizzle-kit generate
 
@@ -23,4 +29,4 @@ types: types-to-openapi types-to-typebox
 
 tsp-build:
 
-.PHONY: test
+.PHONY: test routes

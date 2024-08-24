@@ -83,6 +83,7 @@
     "json-schema-traverse": "^1.0.0",
     "light-my-request": "^5.13.0",
     "locate-path": "^7.2.0",
+    "lodash": "^4.17.21",
     "makeerror": "^1.0.12",
     "minimatch": "^10.0.1",
     "minimist": "^1.2.8",
@@ -135,8 +136,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@faker-js/faker": "^8.4.1",
     "@stylistic/eslint-plugin": "^2.6.4",
     "@types/better-sqlite3": "^7.6.11",
+    "@types/lodash": "^4.17.7",
     "@typespec/compiler": "latest",
     "@typespec/http": "latest",
     "@typespec/json-schema": "latest",

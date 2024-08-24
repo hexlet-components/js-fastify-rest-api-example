@@ -92,21 +92,23 @@ const Binary = () => {
 
 const ComponentsSchemasUser = T.Object({
   id: T.Number(),
-  fullName: T.String(),
-  phone: T.String()
+  fullName: T.Union([T.Null(), T.String()]),
+  email: T.String()
 })
 const ComponentsSchemasUnprocessableEntityError = T.Object({
   code: T.Literal('UNPROCESSABLE_ENTITY'),
   message: T.String()
 })
+const ComponentsSchemasUserCreateDto = T.Object({
+  fullName: T.Optional(T.String()),
+  email: T.String()
+})
 const ComponentsSchemasNotFoundError = T.Object({
   code: T.Literal('NOT_FOUND'),
   message: T.String()
 })
-const ComponentsSchemasUserUpdate = T.Object({
-  id: T.Optional(T.Number()),
-  fullName: T.Optional(T.String()),
-  phone: T.Optional(T.String())
+const ComponentsSchemasUserEditDto = T.Object({
+  fullName: T.Optional(T.String())
 })
 
 const schema = {
@@ -134,11 +136,14 @@ const schema = {
     },
     POST: {
       args: T.Object({
-        body: CloneType(ComponentsSchemasUser, {
+        body: CloneType(ComponentsSchemasUserCreateDto, {
           'x-content-type': 'application/json'
         })
       }),
-      data: T.Any({ 'x-status-code': '201' }),
+      data: CloneType(ComponentsSchemasUser, {
+        'x-status-code': '201',
+        'x-content-type': 'application/json'
+      }),
       error: T.Union([
         CloneType(ComponentsSchemasUnprocessableEntityError, {
           'x-status-code': '422',
@@ -170,14 +175,11 @@ const schema = {
         params: T.Object({
           id: T.Number({ 'x-in': 'path' })
         }),
-        body: CloneType(ComponentsSchemasUserUpdate, {
+        body: CloneType(ComponentsSchemasUserEditDto, {
           'x-content-type': 'application/json'
         })
       }),
-      data: CloneType(ComponentsSchemasUser, {
-        'x-status-code': '200',
-        'x-content-type': 'application/json'
-      }),
+      data: T.Any({ 'x-status-code': '200' }),
       error: T.Union([
         CloneType(ComponentsSchemasNotFoundError, {
           'x-status-code': '404',
@@ -213,7 +215,8 @@ const _components = {
       ComponentsSchemasUnprocessableEntityError
     ),
     User: CloneType(ComponentsSchemasUser),
-    UserUpdate: CloneType(ComponentsSchemasUserUpdate)
+    UserCreateDTO: CloneType(ComponentsSchemasUserCreateDto),
+    UserEditDTO: CloneType(ComponentsSchemasUserEditDto)
   }
 }
 

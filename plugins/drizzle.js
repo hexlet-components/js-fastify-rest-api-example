@@ -15,5 +15,8 @@ export default fp(async function (fastify) {
 
   if (!fastify.db) {
     fastify.decorate('db', db)
+    fastify.addHook('onClose', () => {
+      sqlite.close()
+    })
   }
 })

@@ -50,7 +50,14 @@
         "parameters": [],
         "responses": {
           "201": {
-            "description": "The request has succeeded and a new resource has been created as a result."
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
           },
           "422": {
             "description": "Client error",
@@ -68,7 +75,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserCreateDTO"
               }
             }
           }
@@ -125,14 +132,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
+            "description": "The request has succeeded."
           },
           "404": {
             "description": "The server cannot find the requested resource.",
@@ -160,7 +160,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserUpdate"
+                "$ref": "#/components/schemas/UserEditDTO"
               }
             }
           }
@@ -239,30 +239,39 @@
         "required": [
           "id",
           "fullName",
-          "phone"
+          "email"
         ],
         "properties": {
           "id": {
             "type": "number"
           },
           "fullName": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
-          "phone": {
+          "email": {
             "type": "string"
           }
         }
       },
-      "UserUpdate": {
+      "UserCreateDTO": {
         "type": "object",
+        "required": [
+          "email"
+        ],
         "properties": {
-          "id": {
-            "type": "number"
-          },
           "fullName": {
             "type": "string"
           },
-          "phone": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "UserEditDTO": {
+        "type": "object",
+        "properties": {
+          "fullName": {
             "type": "string"
           }
         }

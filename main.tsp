@@ -29,8 +29,17 @@ model UnprocessableEntityError {
 
 model User {
   id: numeric;
-  fullName: string;
-  phone: string;
+  fullName: string | null;
+  email: string;
+}
+
+model UserCreateDTO {
+  fullName?: string;
+  email: string;
+}
+
+model UserEditDTO {
+  fullName?: string;
 }
 
 @route("/users")
@@ -48,13 +57,13 @@ namespace users {
   } | NotFoundError;
 
   @post
-  op create(@body user: User): {
+  op create(@body user: UserCreateDTO): {
+    @body user: User;
     @statusCode statusCode: 201;
   } | UnprocessableEntityError;
 
   @patch
-  op update(@path id: numeric, @body user: User): {
-    @body user: User;
+  op update(@path id: numeric, @body user: UserEditDTO): {
   } | NotFoundError | UnprocessableEntityError;
 
   @delete

@@ -15,6 +15,20 @@ function config() {
   return {}
 }
 
+function serverConfig() {
+  return {
+    logger: {
+      level: 'error',
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+        },
+      },
+    },
+  }
+}
+
 /**
   * @returns {Promise<import('fastify').FastifyInstance>}
   */
@@ -25,7 +39,7 @@ async function build(t) {
   // fastify-plugin ensures that all decorators
   // are exposed for testing purposes, this is
   // different from the production setup
-  const app = await helper.build(argv, config())
+  const app = await helper.build(argv, config(), serverConfig())
 
   // tear down our app after we are done
   t.after(() => app.close())
