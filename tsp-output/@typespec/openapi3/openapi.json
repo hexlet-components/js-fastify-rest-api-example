@@ -62,7 +62,7 @@
           "422": {
             "description": "Client error",
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
                 }
@@ -109,7 +109,7 @@
           "404": {
             "description": "The server cannot find the requested resource.",
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFoundError"
                 }
@@ -137,7 +137,7 @@
           "404": {
             "description": "The server cannot find the requested resource.",
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFoundError"
                 }
@@ -147,7 +147,7 @@
           "422": {
             "description": "Client error",
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
                 }
@@ -185,7 +185,7 @@
           "404": {
             "description": "The server cannot find the requested resource.",
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFoundError"
                 }
@@ -200,37 +200,87 @@
     "schemas": {
       "NotFoundError": {
         "type": "object",
-        "required": [
-          "code",
-          "message"
-        ],
         "properties": {
-          "code": {
-            "type": "string",
-            "enum": [
-              "NOT_FOUND"
-            ]
+          "type": {
+            "type": "string"
           },
-          "message": {
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
             "type": "string"
           }
         }
       },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          }
+        },
+        "description": "https://www.rfc-editor.org/rfc/rfc9457.html"
+      },
       "UnprocessableEntityError": {
         "type": "object",
         "required": [
-          "code",
-          "message"
+          "errors"
         ],
         "properties": {
-          "code": {
-            "type": "string",
-            "enum": [
-              "UNPROCESSABLE_ENTITY"
-            ]
-          },
-          "message": {
+          "type": {
             "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "rule": {
+                  "type": "string"
+                },
+                "field": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message",
+                "rule",
+                "field"
+              ]
+            }
           }
         }
       },

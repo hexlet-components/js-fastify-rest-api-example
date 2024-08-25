@@ -2,6 +2,7 @@ import path from 'path'
 import AutoLoad from '@fastify/autoload'
 import fp from 'fastify-plugin'
 import { TypeBoxValidatorCompiler } from '@fastify/type-provider-typebox'
+import { errors } from '@vinejs/vine'
 
 // Pass --options via CLI arguments in command to enable these options.
 export const options = {}
@@ -15,6 +16,21 @@ export default fp(async function (fastify, opts) {
   const api = fastify
     .setValidatorCompiler(TypeBoxValidatorCompiler)
     .withTypeProvider()
+
+  fastify.setErrorHandler(function (error, request, reply) {
+    if (error instanceof errors.E_VALIDATION_ERROR) {
+      const errorDetail = {
+        status: 422,
+        title: 'Validation Error',
+        detail: 'Errors related to business logic such as uniqueness',
+        errors: error.messages,
+      }
+      reply.code(422).send(errorDetail)
+    }
+    else {
+      reply.send(error)
+    }
+  })
 
   // Do not touch the following lines
 

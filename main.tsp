@@ -13,18 +13,34 @@ using TypeSpec.JsonSchema;
 @jsonSchema
 namespace FastifyRestApiExample;
 
+/**
+ * https://www.rfc-editor.org/rfc/rfc9457.html
+ */
+@error
+model ProblemDetails {
+  @header("content-type") contentType: "application/problem+json";
+  type?: string;
+  title?: string;
+  status?: integer;
+  detail?: string;
+  instance?: string;
+}
+
 @error
 model NotFoundError {
   @statusCode _: 404;
-  code: "NOT_FOUND";
-  message: string;
+  ...ProblemDetails;
+  // code: "NOT_FOUND";
+  // message: string;
 }
 
 @error
 model UnprocessableEntityError {
   @statusCode _: 422;
-  code: "UNPROCESSABLE_ENTITY";
-  message: string;
+  ...ProblemDetails;
+  errors: Array<{ message: string, rule: string, field: string }>
+  // code: "UNPROCESSABLE_ENTITY";
+  // message: string;
 }
 
 model User {

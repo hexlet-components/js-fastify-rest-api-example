@@ -14,6 +14,7 @@
     "@fastify/type-provider-typebox": "^4.1.0",
     "@geut/openapi-box": "^5.0.6",
     "@typespec/compiler": "^0.59.1",
+    "@vinejs/vine": "^2.1.0",
     "abort-controller": "^3.0.0",
     "abstract-logging": "^2.0.1",
     "ajv": "^8.17.1",

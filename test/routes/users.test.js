@@ -27,14 +27,28 @@ test('get users/:id', async (t) => {
 
 test('post users', async (t) => {
   const app = await build(t)
+  const body = buildUser()
 
   const res = await app.inject({
     method: 'post',
     url: `/users`,
-    body: buildUser(),
+    body: body,
   })
-  assert.equal(res.statusCode, 201)
-  // assert.deepStrictEqual(JSON.parse(res.payload), { id: user.id })
+  assert.equal(res.statusCode, 201, res.body)
+})
+
+test('post users (unique email)', async (t) => {
+  const app = await build(t)
+
+  const user = await app.db.query.users.findFirst()
+  assert.ok(user)
+
+  const res = await app.inject({
+    method: 'post',
+    url: `/users`,
+    body: buildUser({ email: user.email }),
+  })
+  assert.equal(res.statusCode, 422)
 })
 
 test('patch users/:id', async (t) => {
@@ -49,7 +63,6 @@ test('patch users/:id', async (t) => {
     body: buildUser(),
   })
   assert.equal(res.statusCode, 200)
-  // assert.deepStrictEqual(JSON.parse(res.payload), { id: user.id })
 })
 
 test('delete users/:id', async (t) => {
@@ -64,5 +77,4 @@ test('delete users/:id', async (t) => {
   })
 
   assert.equal(res.statusCode, 204)
-  // assert.deepStrictEqual(JSON.parse(res.payload), { id: user.id })
 })

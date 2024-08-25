@@ -2,6 +2,8 @@ import { asc, eq } from 'drizzle-orm'
 
 import * as schemas from '../db/schema.js'
 import { schema } from '../schema.js'
+import { getPagingOptions } from '../lib/utils.js'
+import User from '../models/User.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -17,14 +19,12 @@ export default async function (fastify) {
       },
     },
     async function (request) {
-      const perPage = 10
       const { page = 1 } = request.query
       const users = await db.query
         .users
         .findMany({
           orderBy: asc(schemas.users.id),
-          limit: (perPage),
-          offset: (page - 1) * perPage,
+          ...getPagingOptions(page)
         })
 
       return users
@@ -33,7 +33,7 @@ export default async function (fastify) {
   fastify.get(
     '/users/:id',
     { schema: schema['/users/{id}'].GET.args.properties },
-    async (request, reply) => {
+    async (request) => {
       const user = await db.query.users.findFirst({
         where: eq(schemas.users.id, request.params.id),
       })
@@ -47,17 +47,18 @@ export default async function (fastify) {
     {
       schema: {
         body: schema['/users'].POST.args.properties.body,
-        response: { 201: schema['/users'].POST.data },
+        response: {
+          201: schema['/users'].POST.data,
+          422: schema['/users'].POST.error,
+        },
       },
     },
     async (request, reply) => {
+      const validated = await User.validate(db, request.body)
+
       const [user] = await db.insert(schemas.users)
-        .values(request.body)
-        .returning({
-          id: schemas.users.id,
-          email: schemas.users.email,
-          fullName: schemas.users.fullName,
-        })
+        .values(validated)
+        .returning()
 
       return reply.code(201)
         .send(user)
@@ -66,8 +67,10 @@ export default async function (fastify) {
 
   fastify.patch(
     '/users/:id',
-    { schema: schema['/users/{id}'].PATCH.args.properties },
-    async (request, reply) => {
+    {
+      schema: schema['/users/{id}'].PATCH.args.properties,
+    },
+    async (request) => {
       const user = await db.update(schemas.users)
         .set(request.body)
         .where(eq(schemas.users.id, request.params.id))
