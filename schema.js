@@ -90,10 +90,11 @@ const Binary = () => {
   })
 }
 
-const ComponentsSchemasUser = T.Object({
+const ComponentsSchemasCourse = T.Object({
   id: T.Number(),
-  fullName: T.Union([T.Null(), T.String()]),
-  email: T.String()
+  name: T.String(),
+  description: T.String(),
+  createdAt: T.String({ format: 'date-time' })
 })
 const ComponentsSchemasUnprocessableEntityError = T.Object({
   type: T.Optional(T.String()),
@@ -109,9 +110,20 @@ const ComponentsSchemasUnprocessableEntityError = T.Object({
     })
   )
 })
-const ComponentsSchemasUserCreateDto = T.Object({
-  fullName: T.Optional(T.String()),
-  email: T.String()
+const ComponentsSchemasCourseCreateDto = T.Object({
+  name: T.String(),
+  description: T.String()
+})
+const ComponentsSchemasCourseLesson = T.Object({
+  id: T.Number(),
+  courseId: T.Number(),
+  name: T.String(),
+  body: T.String(),
+  createdAt: T.String({ format: 'date-time' })
+})
+const ComponentsSchemasCourseLessonCreateDto = T.Object({
+  name: T.String(),
+  body: T.String()
 })
 const ComponentsSchemasNotFoundError = T.Object({
   type: T.Optional(T.String()),
@@ -120,11 +132,186 @@ const ComponentsSchemasNotFoundError = T.Object({
   detail: T.Optional(T.String()),
   instance: T.Optional(T.String())
 })
+const ComponentsSchemasCourseEditDto = T.Object({
+  name: T.Optional(T.String()),
+  description: T.Optional(T.String())
+})
+const ComponentsSchemasUser = T.Object({
+  id: T.Number(),
+  fullName: T.Union([T.Null(), T.String()]),
+  email: T.String(),
+  createdAt: T.String({ format: 'date-time' })
+})
+const ComponentsSchemasUserCreateDto = T.Object({
+  fullName: T.Optional(T.String()),
+  email: T.String()
+})
 const ComponentsSchemasUserEditDto = T.Object({
   fullName: T.Optional(T.String())
 })
 
 const schema = {
+  '/courses': {
+    GET: {
+      args: T.Optional(
+        T.Object({
+          query: T.Optional(
+            T.Object({
+              page: T.Optional(T.Number({ default: 1, 'x-in': 'query' }))
+            })
+          )
+        })
+      ),
+      data: T.Object(
+        {
+          data: T.Array(CloneType(ComponentsSchemasCourse))
+        },
+        {
+          'x-status-code': '200',
+          'x-content-type': 'application/json'
+        }
+      ),
+      error: T.Union([T.Any({ 'x-status-code': 'default' })])
+    },
+    POST: {
+      args: T.Object({
+        body: CloneType(ComponentsSchemasCourseCreateDto, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: CloneType(ComponentsSchemasCourse, {
+        'x-status-code': '201',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasUnprocessableEntityError, {
+          'x-status-code': '422',
+          'x-content-type': 'application/problem+json'
+        })
+      ])
+    }
+  },
+  '/courses/{courseId}/lessons': {
+    GET: {
+      args: T.Object({
+        params: T.Object({
+          courseId: T.Number({ 'x-in': 'path' })
+        }),
+        query: T.Optional(
+          T.Object({
+            page: T.Optional(T.Number({ default: 1, 'x-in': 'query' }))
+          })
+        )
+      }),
+      data: T.Object(
+        {
+          data: T.Array(CloneType(ComponentsSchemasCourseLesson))
+        },
+        {
+          'x-status-code': '200',
+          'x-content-type': 'application/json'
+        }
+      ),
+      error: T.Union([T.Any({ 'x-status-code': 'default' })])
+    },
+    POST: {
+      args: T.Object({
+        params: T.Object({
+          courseId: T.Number({ 'x-in': 'path' })
+        }),
+        body: CloneType(ComponentsSchemasCourseLessonCreateDto, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: CloneType(ComponentsSchemasCourseLesson, {
+        'x-status-code': '201',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasUnprocessableEntityError, {
+          'x-status-code': '422',
+          'x-content-type': 'application/problem+json'
+        })
+      ])
+    }
+  },
+  '/courses/{courseId}/lessons/{id}': {
+    GET: {
+      args: T.Object({
+        params: T.Object({
+          courseId: T.Number({ 'x-in': 'path' }),
+          id: T.Number({ 'x-in': 'path' })
+        })
+      }),
+      data: CloneType(ComponentsSchemasCourseLesson, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasNotFoundError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/problem+json'
+        })
+      ])
+    }
+  },
+  '/courses/{id}': {
+    GET: {
+      args: T.Object({
+        params: T.Object({
+          id: T.Number({ 'x-in': 'path' })
+        })
+      }),
+      data: CloneType(ComponentsSchemasCourse, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasNotFoundError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/problem+json'
+        })
+      ])
+    },
+    PATCH: {
+      args: T.Object({
+        params: T.Object({
+          id: T.Number({ 'x-in': 'path' })
+        }),
+        body: CloneType(ComponentsSchemasCourseEditDto, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: CloneType(ComponentsSchemasCourse, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasNotFoundError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/problem+json'
+        }),
+        CloneType(ComponentsSchemasUnprocessableEntityError, {
+          'x-status-code': '422',
+          'x-content-type': 'application/problem+json'
+        })
+      ])
+    },
+    DELETE: {
+      args: T.Object({
+        params: T.Object({
+          id: T.Number({ 'x-in': 'path' })
+        })
+      }),
+      data: T.Any({ 'x-status-code': '204' }),
+      error: T.Union([
+        CloneType(ComponentsSchemasNotFoundError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/problem+json'
+        })
+      ])
+    }
+  },
   '/users': {
     GET: {
       args: T.Optional(
@@ -192,7 +379,10 @@ const schema = {
           'x-content-type': 'application/json'
         })
       }),
-      data: T.Any({ 'x-status-code': '200' }),
+      data: CloneType(ComponentsSchemasUser, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
       error: T.Union([
         CloneType(ComponentsSchemasNotFoundError, {
           'x-status-code': '404',
@@ -223,6 +413,11 @@ const schema = {
 
 const _components = {
   schemas: {
+    Course: CloneType(ComponentsSchemasCourse),
+    CourseCreateDTO: CloneType(ComponentsSchemasCourseCreateDto),
+    CourseEditDTO: CloneType(ComponentsSchemasCourseEditDto),
+    CourseLesson: CloneType(ComponentsSchemasCourseLesson),
+    CourseLessonCreateDTO: CloneType(ComponentsSchemasCourseLessonCreateDto),
     NotFoundError: CloneType(ComponentsSchemasNotFoundError),
     ProblemDetails: T.Object({
       type: T.Optional(T.String()),
@@ -230,6 +425,9 @@ const _components = {
       status: T.Optional(T.Integer()),
       detail: T.Optional(T.String()),
       instance: T.Optional(T.String())
+    }),
+    Timestamps: T.Object({
+      createdAt: T.String({ format: 'date-time' })
     }),
     UnprocessableEntityError: CloneType(
       ComponentsSchemasUnprocessableEntityError

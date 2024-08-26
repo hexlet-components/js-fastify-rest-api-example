@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import * as assert from 'node:assert'
 import { build } from '../helper.js'
-import { buildUser } from '../data.js'
+import { buildUser } from '../../lib/data.js'
 
 test('get users', async (t) => {
   const app = await build(t)

@@ -24,7 +24,7 @@ export default async function (fastify) {
         .users
         .findMany({
           orderBy: asc(schemas.users.id),
-          ...getPagingOptions(page)
+          ...getPagingOptions(page),
         })
 
       return users

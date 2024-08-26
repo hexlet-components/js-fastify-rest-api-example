@@ -30,23 +30,28 @@ model ProblemDetails {
 model NotFoundError {
   @statusCode _: 404;
   ...ProblemDetails;
-  // code: "NOT_FOUND";
-  // message: string;
 }
 
 @error
 model UnprocessableEntityError {
   @statusCode _: 422;
   ...ProblemDetails;
-  errors: Array<{ message: string, rule: string, field: string }>
-  // code: "UNPROCESSABLE_ENTITY";
-  // message: string;
+  errors: Array<{
+    message: string;
+    rule: string;
+    field: string;
+  }>;
+}
+
+model Timestamps {
+  createdAt: utcDateTime;
 }
 
 model User {
   id: numeric;
   fullName: string | null;
   email: string;
+  ...Timestamps;
 }
 
 model UserCreateDTO {
@@ -56,6 +61,36 @@ model UserCreateDTO {
 
 model UserEditDTO {
   fullName?: string;
+}
+
+model Course {
+  id: numeric;
+  name: string;
+  description: string;
+  ...Timestamps;
+}
+
+model CourseCreateDTO {
+  name: string;
+  description: string;
+}
+
+model CourseEditDTO {
+  name?: string;
+  description?: string;
+}
+
+model CourseLesson {
+  id: numeric;
+  courseId: numeric;
+  name: string;
+  body: string;
+  ...Timestamps;
+}
+
+model CourseLessonCreateDTO {
+  name: string;
+  body: string;
 }
 
 @route("/users")
@@ -80,10 +115,63 @@ namespace users {
 
   @patch
   op update(@path id: numeric, @body user: UserEditDTO): {
+    @body user: User;
   } | NotFoundError | UnprocessableEntityError;
 
   @delete
   op destroy(@path id: numeric): {
     @statusCode statusCode: 204;
   } | NotFoundError;
+}
+
+@route("/courses")
+namespace courses {
+  @get
+  op index(@query page?: numeric = 1): {
+    @body courses: {
+      data: Course[];
+    };
+  };
+
+  @get
+  op show(@path id: numeric): {
+    @body course: Course;
+  } | NotFoundError;
+
+  @post
+  op create(@body course: CourseCreateDTO): {
+    @body course: Course;
+    @statusCode statusCode: 201;
+  } | UnprocessableEntityError;
+
+  @patch
+  op update(@path id: numeric, @body course: CourseEditDTO): {
+    @body course: Course;
+  } | NotFoundError | UnprocessableEntityError;
+
+  @delete
+  op destroy(@path id: numeric): {
+    @statusCode statusCode: 204;
+  } | NotFoundError;
+}
+
+@route("/courses/{courseId}/lessons")
+namespace courses_lessons {
+  @get
+  op index(@path courseId: numeric, @query page?: numeric = 1): {
+    @body lessons: {
+      data: CourseLesson[];
+    };
+  };
+
+  @get
+  op show(@path courseId: numeric, @path id: numeric): {
+    @body lessons: CourseLesson;
+  } | NotFoundError;
+
+  @post
+  op create(@path courseId: numeric, @body course: CourseLessonCreateDTO): {
+    @body lesson: CourseLesson;
+    @statusCode statusCode: 201;
+  } | UnprocessableEntityError;
 }
