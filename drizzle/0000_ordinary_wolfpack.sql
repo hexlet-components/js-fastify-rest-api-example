@@ -1,6 +1,6 @@
 CREATE TABLE `course_lessons` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`name` text,
+	`name` text NOT NULL,
 	`courseId` integer NOT NULL,
 	`body` text NOT NULL,
 	`created_at` text DEFAULT (unixepoch()) NOT NULL,

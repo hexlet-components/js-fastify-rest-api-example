@@ -3,7 +3,6 @@ import { and, asc, eq } from 'drizzle-orm'
 import * as schemas from './../../db/schema.js'
 import { schema } from '../../schema.js'
 import { getPagingOptions } from '../../lib/utils.js'
-import Course from '../../models/Course.js'
 import Lesson from '../../models/Course/Lesson.js'
 
 /**
