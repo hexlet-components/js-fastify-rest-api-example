@@ -1,9 +1,9 @@
 import { asc, eq } from 'drizzle-orm'
 
-import * as schemas from '../db/schema.js'
-import { schema } from '../schema.js'
-import { getPagingOptions } from '../lib/utils.js'
-import User from '../models/User.js'
+import * as schemas from '../../db/schema.js'
+import { schema } from '../../schema.js'
+import { getPagingOptions } from '../../lib/utils.js'
+import User from '../../models/User.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -14,6 +14,7 @@ export default async function (fastify) {
   fastify.get(
     '/users',
     {
+      preHandler: fastify.verifyBearerAuth,
       schema: {
         querystring: schema['/users'].GET.args.properties.query,
       },
@@ -32,7 +33,10 @@ export default async function (fastify) {
 
   fastify.get(
     '/users/:id',
-    { schema: schema['/users/{id}'].GET.args.properties },
+    {
+      preHandler: fastify.verifyBearerAuth,
+      schema: schema['/users/{id}'].GET.args.properties,
+    },
     async (request) => {
       const user = await db.query.users.findFirst({
         where: eq(schemas.users.id, request.params.id),
@@ -45,6 +49,7 @@ export default async function (fastify) {
   fastify.post(
     '/users',
     {
+      preHandler: fastify.verifyBearerAuth,
       schema: {
         body: schema['/users'].POST.args.properties.body,
         response: {
@@ -68,6 +73,7 @@ export default async function (fastify) {
   fastify.patch(
     '/users/:id',
     {
+      preHandler: fastify.verifyBearerAuth,
       schema: schema['/users/{id}'].PATCH.args.properties,
     },
     async (request) => {
@@ -83,7 +89,10 @@ export default async function (fastify) {
 
   fastify.delete(
     '/users/:id',
-    { schema: schema['/users/{id}'].DELETE.args.properties },
+    {
+      preHandler: fastify.verifyBearerAuth,
+      schema: schema['/users/{id}'].DELETE.args.properties,
+    },
     async (request, reply) => {
       const user = await db.delete(schemas.users)
         .where(eq(schemas.users.id, request.params.id))

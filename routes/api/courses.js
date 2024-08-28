@@ -1,9 +1,9 @@
 import { asc, eq } from 'drizzle-orm'
 
-import * as schemas from '../db/schema.js'
-import { schema } from '../schema.js'
-import { getPagingOptions } from '../lib/utils.js'
-import Course from '../models/Course.js'
+import * as schemas from '../../db/schema.js'
+import { schema } from '../../schema.js'
+import { getPagingOptions } from '../../lib/utils.js'
+import Course from '../../models/Course.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -45,6 +45,7 @@ export default async function (fastify) {
   fastify.post(
     '/courses',
     {
+      preHandler: fastify.verifyBearerAuth,
       schema: {
         body: schema['/courses'].POST.args.properties.body,
         response: {
@@ -68,14 +69,16 @@ export default async function (fastify) {
   fastify.patch(
     '/courses/:id',
     {
+      preHandler: fastify.verifyBearerAuth,
       schema: schema['/courses/{id}'].PATCH.args.properties,
     },
     async (request) => {
-      const user = await db.update(schemas.courses)
+      // fastify.assert.equal(a, b, 403)
+      const course = await db.update(schemas.courses)
         .set(request.body)
         .where(eq(schemas.courses.id, request.params.id))
         .returning()
-      fastify.assert(user, 404)
+      fastify.assert(course, 404)
 
       return { id: request.params.id }
     },
@@ -83,7 +86,10 @@ export default async function (fastify) {
 
   fastify.delete(
     '/courses/:id',
-    { schema: schema['/courses/{id}'].DELETE.args.properties },
+    {
+      preHandler: fastify.verifyBearerAuth,
+      schema: schema['/courses/{id}'].DELETE.args.properties,
+    },
     async (request, reply) => {
       const user = await db.delete(schemas.courses)
         .where(eq(schemas.courses.id, request.params.id))

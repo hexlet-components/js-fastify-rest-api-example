@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import * as assert from 'node:assert'
-import { build } from '../../helper.js'
-import { buildCourseLesson } from '../../../lib/data.js'
+import { authHeaders, build } from '../../../helper.js'
+import { buildCourseLesson } from '../../../../lib/data.js'
 
 test('get lessons', async (t) => {
   const app = await build(t)
@@ -10,7 +10,7 @@ test('get lessons', async (t) => {
   assert.ok(lesson)
 
   const res = await app.inject({
-    url: `/courses/${lesson.courseId}/lessons`,
+    url: `/api/courses/${lesson.courseId}/lessons`,
   })
   assert.equal(res.statusCode, 200)
 })
@@ -22,13 +22,13 @@ test('get lessons/:id', async (t) => {
   assert.ok(lesson)
 
   const res = await app.inject({
-    url: `/courses/${lesson.courseId}/lessons/${lesson.id}`,
+    url: `/api/courses/${lesson.courseId}/lessons/${lesson.id}`,
   })
   assert.equal(res.statusCode, 200)
   // assert.deepStrictEqual(JSON.parse(res.payload), { id: course.id })
 })
 
-test('post courses', async (t) => {
+test('post lessons', async (t) => {
   const app = await build(t)
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
@@ -37,7 +37,10 @@ test('post courses', async (t) => {
 
   const res = await app.inject({
     method: 'post',
-    url: `/courses/${course.id}/lessons`,
+    url: `/api/courses/${course.id}/lessons`,
+    headers: {
+      ...authHeaders(),
+    },
     body: body,
   })
   assert.equal(res.statusCode, 201, res.body)

@@ -47,6 +47,12 @@ async function build(t) {
   return app
 }
 
+export function authHeaders() {
+  return {
+    authorization: 'Bearer secret-key',
+  }
+}
+
 export {
   config,
   build,

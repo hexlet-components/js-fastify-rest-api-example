@@ -121,6 +121,13 @@ const ComponentsSchemasCourseLesson = T.Object({
   body: T.String(),
   createdAt: T.String({ format: 'date-time' })
 })
+const ComponentsSchemasUnauthorizedError = T.Object({
+  type: T.Optional(T.String()),
+  title: T.Optional(T.String()),
+  status: T.Optional(T.Integer()),
+  detail: T.Optional(T.String()),
+  instance: T.Optional(T.String())
+})
 const ComponentsSchemasCourseLessonCreateDto = T.Object({
   name: T.String(),
   body: T.String()
@@ -228,6 +235,10 @@ const schema = {
         'x-content-type': 'application/json'
       }),
       error: T.Union([
+        CloneType(ComponentsSchemasUnauthorizedError, {
+          'x-status-code': '401',
+          'x-content-type': 'application/problem+json'
+        }),
         CloneType(ComponentsSchemasUnprocessableEntityError, {
           'x-status-code': '422',
           'x-content-type': 'application/problem+json'
@@ -287,6 +298,10 @@ const schema = {
         'x-content-type': 'application/json'
       }),
       error: T.Union([
+        CloneType(ComponentsSchemasUnauthorizedError, {
+          'x-status-code': '401',
+          'x-content-type': 'application/problem+json'
+        }),
         CloneType(ComponentsSchemasNotFoundError, {
           'x-status-code': '404',
           'x-content-type': 'application/problem+json'
@@ -305,6 +320,10 @@ const schema = {
       }),
       data: T.Any({ 'x-status-code': '204' }),
       error: T.Union([
+        CloneType(ComponentsSchemasUnauthorizedError, {
+          'x-status-code': '401',
+          'x-content-type': 'application/problem+json'
+        }),
         CloneType(ComponentsSchemasNotFoundError, {
           'x-status-code': '404',
           'x-content-type': 'application/problem+json'
@@ -418,6 +437,13 @@ const _components = {
     CourseEditDTO: CloneType(ComponentsSchemasCourseEditDto),
     CourseLesson: CloneType(ComponentsSchemasCourseLesson),
     CourseLessonCreateDTO: CloneType(ComponentsSchemasCourseLessonCreateDto),
+    ForbiddenError: T.Object({
+      type: T.Optional(T.String()),
+      title: T.Optional(T.String()),
+      status: T.Optional(T.Integer()),
+      detail: T.Optional(T.String()),
+      instance: T.Optional(T.String())
+    }),
     NotFoundError: CloneType(ComponentsSchemasNotFoundError),
     ProblemDetails: T.Object({
       type: T.Optional(T.String()),
@@ -429,12 +455,14 @@ const _components = {
     Timestamps: T.Object({
       createdAt: T.String({ format: 'date-time' })
     }),
+    UnauthorizedError: CloneType(ComponentsSchemasUnauthorizedError),
     UnprocessableEntityError: CloneType(
       ComponentsSchemasUnprocessableEntityError
     ),
     User: CloneType(ComponentsSchemasUser),
     UserCreateDTO: CloneType(ComponentsSchemasUserCreateDto),
-    UserEditDTO: CloneType(ComponentsSchemasUserEditDto)
+    UserEditDTO: CloneType(ComponentsSchemasUserEditDto),
+    Versions: T.Literal('v1')
   }
 }
 

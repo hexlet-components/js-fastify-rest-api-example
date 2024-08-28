@@ -1,9 +1,12 @@
 import "@typespec/http";
 import "@typespec/rest";
+import "@typespec/versioning";
 import "@typespec/openapi3";
 import "@typespec/json-schema";
 
+using TypeSpec.Versioning;
 using TypeSpec.Http;
+using TypeSpec.Rest;
 using TypeSpec.JsonSchema;
 
 @service({
@@ -11,7 +14,12 @@ using TypeSpec.JsonSchema;
 })
 @server("https://code-basics.com", "Single server endpoint")
 @jsonSchema
+@versioned(Versions)
 namespace FastifyRestApiExample;
+
+enum Versions {
+  v1,
+}
 
 /**
  * https://www.rfc-editor.org/rfc/rfc9457.html
@@ -29,6 +37,18 @@ model ProblemDetails {
 @error
 model NotFoundError {
   @statusCode _: 404;
+  ...ProblemDetails;
+}
+
+@error
+model UnauthorizedError {
+  @statusCode _: 401;
+  ...ProblemDetails;
+}
+
+@error
+model ForbiddenError {
+  @statusCode _: 403;
   ...ProblemDetails;
 }
 
@@ -94,6 +114,7 @@ model CourseLessonCreateDTO {
 }
 
 @route("/users")
+@useAuth(BearerAuth)
 namespace users {
   @get
   op index(@query page?: numeric = 1): {
@@ -139,20 +160,23 @@ namespace courses {
   } | NotFoundError;
 
   @post
+  @useAuth(BearerAuth)
   op create(@body course: CourseCreateDTO): {
     @body course: Course;
     @statusCode statusCode: 201;
   } | UnprocessableEntityError;
 
   @patch
+  @useAuth(BearerAuth)
   op update(@path id: numeric, @body course: CourseEditDTO): {
     @body course: Course;
-  } | NotFoundError | UnprocessableEntityError;
+  } | NotFoundError | UnprocessableEntityError | UnauthorizedError;
 
   @delete
+  @useAuth(BearerAuth)
   op destroy(@path id: numeric): {
     @statusCode statusCode: 204;
-  } | NotFoundError;
+  } | NotFoundError | UnauthorizedError;
 }
 
 @route("/courses/{courseId}/lessons")
@@ -170,8 +194,9 @@ namespace courses_lessons {
   } | NotFoundError;
 
   @post
+  @useAuth(BearerAuth)
   op create(@path courseId: numeric, @body course: CourseLessonCreateDTO): {
     @body lesson: CourseLesson;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError;
+  } | UnprocessableEntityError | UnauthorizedError;
 }

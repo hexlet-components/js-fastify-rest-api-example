@@ -1,9 +1,9 @@
 import { and, asc, eq } from 'drizzle-orm'
 
-import * as schemas from './../../db/schema.js'
-import { schema } from '../../schema.js'
-import { getPagingOptions } from '../../lib/utils.js'
-import Lesson from '../../models/Course/Lesson.js'
+import * as schemas from '../../../db/schema.js'
+import { schema } from '../../../schema.js'
+import { getPagingOptions } from '../../../lib/utils.js'
+import Lesson from '../../../models/Course/Lesson.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -49,15 +49,17 @@ export default async function (fastify) {
     },
   )
 
+  const postLessons = schema['/courses/{courseId}/lessons'].POST
   fastify.post(
     '/courses/:courseId/lessons',
     {
+      preHandler: fastify.verifyBearerAuth,
       schema: {
-        params: schema['/courses/{courseId}/lessons'].GET.args.properties.params,
-        body: schema['/courses/{courseId}/lessons'].POST.args.properties.body,
+        params: postLessons.args.properties.params,
+        body: postLessons.args.properties.body,
         response: {
-          201: schema['/courses/{courseId}/lessons'].POST.data,
-          422: schema['/courses/{courseId}/lessons'].POST.error,
+          201: postLessons.data,
+          422: postLessons.error,
         },
       },
     },
