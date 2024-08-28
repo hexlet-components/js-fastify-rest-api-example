@@ -143,6 +143,13 @@ const ComponentsSchemasCourseEditDto = T.Object({
   name: T.Optional(T.String()),
   description: T.Optional(T.String())
 })
+const ComponentsSchemasTokenInfo = T.Object({
+  token: T.String()
+})
+const ComponentsSchemasAuthInfo = T.Object({
+  email: T.String(),
+  password: T.String()
+})
 const ComponentsSchemasUser = T.Object({
   id: T.Number(),
   fullName: T.Union([T.Null(), T.String()]),
@@ -331,6 +338,25 @@ const schema = {
       ])
     }
   },
+  '/tokens': {
+    POST: {
+      args: T.Object({
+        body: CloneType(ComponentsSchemasAuthInfo, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: CloneType(ComponentsSchemasTokenInfo, {
+        'x-status-code': '201',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasUnprocessableEntityError, {
+          'x-status-code': '422',
+          'x-content-type': 'application/problem+json'
+        })
+      ])
+    }
+  },
   '/users': {
     GET: {
       args: T.Optional(
@@ -432,6 +458,7 @@ const schema = {
 
 const _components = {
   schemas: {
+    AuthInfo: CloneType(ComponentsSchemasAuthInfo),
     Course: CloneType(ComponentsSchemasCourse),
     CourseCreateDTO: CloneType(ComponentsSchemasCourseCreateDto),
     CourseEditDTO: CloneType(ComponentsSchemasCourseEditDto),
@@ -455,6 +482,7 @@ const _components = {
     Timestamps: T.Object({
       createdAt: T.String({ format: 'date-time' })
     }),
+    TokenInfo: CloneType(ComponentsSchemasTokenInfo),
     UnauthorizedError: CloneType(ComponentsSchemasUnauthorizedError),
     UnprocessableEntityError: CloneType(
       ComponentsSchemasUnprocessableEntityError

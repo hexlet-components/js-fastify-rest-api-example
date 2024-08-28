@@ -14,7 +14,7 @@ export default async function (fastify) {
   fastify.get(
     '/users',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: {
         querystring: schema['/users'].GET.args.properties.query,
       },
@@ -34,7 +34,7 @@ export default async function (fastify) {
   fastify.get(
     '/users/:id',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: schema['/users/{id}'].GET.args.properties,
     },
     async (request) => {
@@ -49,7 +49,7 @@ export default async function (fastify) {
   fastify.post(
     '/users',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: {
         body: schema['/users'].POST.args.properties.body,
         response: {
@@ -73,7 +73,7 @@ export default async function (fastify) {
   fastify.patch(
     '/users/:id',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: schema['/users/{id}'].PATCH.args.properties,
     },
     async (request) => {
@@ -90,7 +90,7 @@ export default async function (fastify) {
   fastify.delete(
     '/users/:id',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: schema['/users/{id}'].DELETE.args.properties,
     },
     async (request, reply) => {

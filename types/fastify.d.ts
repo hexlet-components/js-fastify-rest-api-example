@@ -14,6 +14,7 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 declare module 'fastify' {
   interface FastifyInstance {
     db: ReturnType<typeof drizzle<typeof schemas>>;
+    authenticate: () => Promise<void>;
   }
   type FastifyTypebox = FastifyInstance<
     RawServerDefault,

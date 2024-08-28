@@ -45,7 +45,7 @@ export default async function (fastify) {
   fastify.post(
     '/courses',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: {
         body: schema['/courses'].POST.args.properties.body,
         response: {
@@ -69,7 +69,7 @@ export default async function (fastify) {
   fastify.patch(
     '/courses/:id',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: schema['/courses/{id}'].PATCH.args.properties,
     },
     async (request) => {
@@ -87,7 +87,7 @@ export default async function (fastify) {
   fastify.delete(
     '/courses/:id',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: schema['/courses/{id}'].DELETE.args.properties,
     },
     async (request, reply) => {

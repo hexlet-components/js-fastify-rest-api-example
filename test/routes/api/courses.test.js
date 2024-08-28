@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import * as assert from 'node:assert'
-import { authHeaders, build } from '../../helper.js'
+import { getAuthHeader, build } from '../../helper.js'
 import { buildCourse } from '../../../lib/data.js'
 
 test('get courses', async (t) => {
@@ -29,11 +29,12 @@ test('post courses', async (t) => {
   const app = await build(t)
   const body = buildCourse()
 
+  const authHeader = await getAuthHeader(app)
   const res = await app.inject({
     method: 'post',
     url: `/api/courses`,
     headers: {
-      ...authHeaders(),
+      ...authHeader,
     },
     body: body,
   })
@@ -46,11 +47,12 @@ test('patch courses/:id', async (t) => {
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
 
+  const authHeader = await getAuthHeader(app)
   const res = await app.inject({
     method: 'patch',
     url: `/api/courses/${course.id}`,
     headers: {
-      ...authHeaders(),
+      ...authHeader,
     },
     body: buildCourse(),
   })
@@ -63,10 +65,11 @@ test('delete courses/:id', async (t) => {
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
 
+  const authHeader = await getAuthHeader(app)
   const res = await app.inject({
     method: 'delete',
     headers: {
-      ...authHeaders(),
+      ...authHeader,
     },
     url: `/api/courses/${course.id}`,
   })

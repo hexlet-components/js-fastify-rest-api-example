@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import * as assert from 'node:assert'
-import { authHeaders, build } from '../../../helper.js'
+import { getAuthHeader, build } from '../../../helper.js'
 import { buildCourseLesson } from '../../../../lib/data.js'
 
 test('get lessons', async (t) => {
@@ -35,11 +35,12 @@ test('post lessons', async (t) => {
 
   const body = buildCourseLesson()
 
+  const authHeader = await getAuthHeader(app)
   const res = await app.inject({
     method: 'post',
     url: `/api/courses/${course.id}/lessons`,
     headers: {
-      ...authHeaders(),
+      ...authHeader,
     },
     body: body,
   })

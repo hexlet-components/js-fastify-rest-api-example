@@ -1,6 +1,7 @@
 // This file contains code that we reuse
 // between our tests.
 
+import assert from 'assert'
 import helper from 'fastify-cli/helper.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -47,13 +48,20 @@ async function build(t) {
   return app
 }
 
-export function authHeaders() {
+/**
+  * @param {import('fastify').FastifyInstance} app
+  */
+async function getAuthHeader(app) {
+  const client = await app.db.query.users.findFirst()
+  assert.ok(client)
+  const token = app.jwt.sign({ id: client.id })
   return {
-    authorization: 'Bearer secret-key',
+    Authorization: `Bearer ${token}`,
   }
 }
 
 export {
   config,
   build,
+  getAuthHeader,
 }

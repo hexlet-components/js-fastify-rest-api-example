@@ -108,6 +108,15 @@ model CourseLesson {
   ...Timestamps;
 }
 
+model AuthInfo {
+  email: string;
+  password: string;
+}
+
+model TokenInfo {
+  token: string;
+}
+
 model CourseLessonCreateDTO {
   name: string;
   body: string;
@@ -145,6 +154,15 @@ namespace users {
   } | NotFoundError;
 }
 
+@route("/tokens")
+namespace tokens {
+  @post
+  op create(@body auth_info: AuthInfo): {
+    @body token: TokenInfo;
+    @statusCode statusCode: 201;
+  } | UnprocessableEntityError;
+}
+
 @route("/courses")
 namespace courses {
   @get
@@ -168,9 +186,13 @@ namespace courses {
 
   @patch
   @useAuth(BearerAuth)
-  op update(@path id: numeric, @body course: CourseEditDTO): {
-    @body course: Course;
-  } | NotFoundError | UnprocessableEntityError | UnauthorizedError;
+  op update(@path id: numeric, @body course: CourseEditDTO):
+    | {
+        @body course: Course;
+      }
+    | NotFoundError
+    | UnprocessableEntityError
+    | UnauthorizedError;
 
   @delete
   @useAuth(BearerAuth)
