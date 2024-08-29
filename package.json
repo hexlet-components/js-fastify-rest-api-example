@@ -63,7 +63,6 @@
     "find-up": "^7.0.0",
     "forwarded": "^0.2.0",
     "fs.realpath": "^1.0.0",
-    "fsevents": "^2.3.3",
     "generify": "^4.2.0",
     "glob": "^11.0.0",
     "glob-parent": "^6.0.2",
