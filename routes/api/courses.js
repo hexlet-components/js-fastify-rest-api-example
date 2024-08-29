@@ -73,12 +73,15 @@ export default async function (fastify) {
       schema: schema['/courses/{id}'].PATCH.args.properties,
     },
     async (request) => {
-      // fastify.assert.equal(a, b, 403)
-      const course = await db.update(schemas.courses)
+      const course = await db.query.courses.findFirst({
+        where: eq(schemas.courses.id, request.params.id),
+      })
+      fastify.assert(course, 404)
+
+      fastify.assert.equal(request.user.id, course?.creatorId, 403)
+      await db.update(schemas.courses)
         .set(request.body)
         .where(eq(schemas.courses.id, request.params.id))
-        .returning()
-      fastify.assert(course, 404)
 
       return { id: request.params.id }
     },

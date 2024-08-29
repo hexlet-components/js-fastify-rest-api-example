@@ -47,7 +47,7 @@ test('patch courses/:id', async (t) => {
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
 
-  const authHeader = await getAuthHeader(app)
+  const authHeader = await getAuthHeader(app, course.creatorId)
   const res = await app.inject({
     method: 'patch',
     url: `/api/courses/${course.id}`,

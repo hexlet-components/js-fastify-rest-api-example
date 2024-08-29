@@ -5,6 +5,8 @@ import assert from 'assert'
 import helper from 'fastify-cli/helper.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import * as schemas from '../db/schema.js'
+import { eq } from 'drizzle-orm'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -49,10 +51,12 @@ async function build(t) {
 }
 
 /**
-  * @param {import('fastify').FastifyInstance} app
-  */
-async function getAuthHeader(app) {
-  const client = await app.db.query.users.findFirst()
+ * @param {import('fastify').FastifyInstance} app
+ * @param {number | null} userId
+ */
+async function getAuthHeader(app, userId = null) {
+  const from = app.db.select().from(schemas.users)
+  const [client] = userId ? await from.where(eq(schemas.users.id, userId)) : await from.limit(1)
   assert.ok(client)
   const token = app.jwt.sign({ id: client.id })
   return {
