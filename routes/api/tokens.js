@@ -1,4 +1,3 @@
-import { and, asc, eq } from 'drizzle-orm'
 import { schema } from '../../schema.js'
 
 /**
@@ -20,8 +19,8 @@ export default async function (fastify) {
         },
       },
     },
-    async (request, reply) => {
-      const client = await fastify.db.query.users.findFirst()
+    async (_request, reply) => {
+      const client = await db.query.users.findFirst()
       fastify.assert.ok(client)
       const token = fastify.jwt.sign({ user: { id: client.id } })
       return reply.code(201)

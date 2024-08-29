@@ -11,4 +11,10 @@ export default [
   },
   stylistic.configs['recommended-flat'],
   pluginJs.configs.recommended,
+  {
+    rules: {
+      'no-unused-vars': 'off',
+    },
+    ignores: ['schema.js'], // is now working
+  },
 ]

@@ -1,5 +1,4 @@
 import vine from '@vinejs/vine'
-import uniqueRule from '../rules/unique.js'
 import { courses } from '../db/schema.js'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import * as schemas from '../db/schema.js'
