@@ -53,7 +53,7 @@ export default async function (fastify) {
   fastify.post(
     '/courses/:courseId/lessons',
     {
-      preHandler: fastify.verifyBearerAuth,
+      onRequest: [fastify.authenticate],
       schema: {
         params: postLessons.args.properties.params,
         body: postLessons.args.properties.body,
@@ -64,6 +64,13 @@ export default async function (fastify) {
       },
     },
     async (request, reply) => {
+      const course = await db.query.courses.findFirst({
+        where: eq(schemas.courses.id, request.params.courseId),
+      })
+      fastify.assert(course, 404)
+
+      fastify.assert.equal(request.user.id, course.creatorId, 403)
+
       const validated = await Lesson.validate(db, request.body)
       validated.courseId = request.params.courseId
 

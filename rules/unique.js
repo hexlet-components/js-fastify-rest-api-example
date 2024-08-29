@@ -4,12 +4,8 @@ import * as schemas from '../db/schema.js'
 import { eq } from 'drizzle-orm'
 
 /**
- * @typedef {typeof schemas[keyof typeof schemas]} Schema
- */
-
-/**
  * @param {any} value
- * @param {{ schema: Schema }} options
+ * @param {{ schema: import('../types.ts').DrizzleSchema }} options
  * @param {import('@vinejs/vine/types').FieldContext} field
  */
 async function unique(value, options, field,

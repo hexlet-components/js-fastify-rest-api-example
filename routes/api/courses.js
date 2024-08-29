@@ -56,6 +56,7 @@ export default async function (fastify) {
     },
     async (request, reply) => {
       const validated = await Course.validate(db, request.body)
+      validated.creatorId = request.user.id
 
       const [course] = await db.insert(schemas.courses)
         .values(validated)
@@ -78,7 +79,7 @@ export default async function (fastify) {
       })
       fastify.assert(course, 404)
 
-      fastify.assert.equal(request.user.id, course?.creatorId, 403)
+      fastify.assert.equal(request.user.id, course.creatorId, 403)
       await db.update(schemas.courses)
         .set(request.body)
         .where(eq(schemas.courses.id, request.params.id))
@@ -94,10 +95,15 @@ export default async function (fastify) {
       schema: schema['/courses/{id}'].DELETE.args.properties,
     },
     async (request, reply) => {
-      const user = await db.delete(schemas.courses)
+      const course = await db.query.courses.findFirst({
+        where: eq(schemas.courses.id, request.params.id),
+      })
+      fastify.assert(course, 404)
+
+      fastify.assert.equal(request.user.id, course.creatorId, 403)
+
+      await db.delete(schemas.courses)
         .where(eq(schemas.courses.id, request.params.id))
-        .returning()
-      fastify.assert(user, 404)
       return reply.code(204).send()
     },
   )

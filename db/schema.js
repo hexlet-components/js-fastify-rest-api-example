@@ -17,8 +17,8 @@ export const users = sqliteTable('users', {
 
 export const courses = sqliteTable('courses', {
   id: integer('id').primaryKey(),
-  name: text('name'),
-  creatorId: integer('creator_id').references(() => users.id),
+  name: text('name').notNull(),
+  creatorId: integer('creator_id').references(() => users.id).notNull(),
   description: text('description').notNull(),
   createdAt: text('created_at')
     .notNull()

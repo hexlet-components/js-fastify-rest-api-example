@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import * as assert from 'node:assert'
 import { getAuthHeader, build } from '../../helper.js'
 import { buildCourse } from '../../../lib/data.js'
+import _ from 'lodash'
 
 test('get courses', async (t) => {
   const app = await build(t)
@@ -54,7 +55,7 @@ test('patch courses/:id', async (t) => {
     headers: {
       ...authHeader,
     },
-    body: buildCourse(),
+    body: _.pick(buildCourse(), ['name', 'description']),
   })
   assert.equal(res.statusCode, 200)
 })
@@ -65,7 +66,7 @@ test('delete courses/:id', async (t) => {
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
 
-  const authHeader = await getAuthHeader(app)
+  const authHeader = await getAuthHeader(app, course.creatorId)
   const res = await app.inject({
     method: 'delete',
     headers: {

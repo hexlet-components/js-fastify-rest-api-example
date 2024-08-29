@@ -9,8 +9,8 @@ CREATE TABLE `course_lessons` (
 --> statement-breakpoint
 CREATE TABLE `courses` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`name` text,
-	`creator_id` integer,
+	`name` text NOT NULL,
+	`creator_id` integer NOT NULL,
 	`description` text NOT NULL,
 	`created_at` text DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`creator_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action

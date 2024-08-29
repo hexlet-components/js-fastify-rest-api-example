@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "91bd3d6b-c3d6-444a-ab90-6e466fe473aa",
+  "id": "3d6c5f9b-cbab-4fbb-b936-cbe84a1c98f6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "course_lessons": {
@@ -77,14 +77,14 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "creator_id": {
           "name": "creator_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "description": {

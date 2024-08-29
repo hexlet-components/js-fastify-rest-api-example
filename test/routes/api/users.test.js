@@ -1,4 +1,4 @@
-import { test, beforeEach } from 'node:test'
+import { test } from 'node:test'
 import * as assert from 'node:assert'
 import { build, getAuthHeader } from '../../helper.js'
 import { buildUser } from '../../../lib/data.js'

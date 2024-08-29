@@ -17,7 +17,7 @@ export default fp(async function (fastify, opts) {
     .setValidatorCompiler(TypeBoxValidatorCompiler)
     .withTypeProvider()
 
-  fastify.setErrorHandler(function (error, request, reply) {
+  fastify.setErrorHandler(function (error, _request, reply) {
     if (error instanceof errors.E_VALIDATION_ERROR) {
       const errorDetail = {
         status: 422,

@@ -12,7 +12,7 @@ import {
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 declare module 'fastify' {
-  interface FastifyInstance {
+  interface FastifyInstance extends FastifyJwtNamespace<{ namespace: 'security' }> {
     db: ReturnType<typeof drizzle<typeof schemas>>;
     authenticate: () => Promise<void>;
   }
