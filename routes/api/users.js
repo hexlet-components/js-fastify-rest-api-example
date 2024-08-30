@@ -77,13 +77,13 @@ export default async function (fastify) {
       schema: schema['/users/{id}'].PATCH.args.properties,
     },
     async (request) => {
-      const user = await db.update(schemas.users)
+      const [user] = await db.update(schemas.users)
         .set(request.body)
         .where(eq(schemas.users.id, request.params.id))
         .returning()
       fastify.assert(user, 404)
 
-      return { id: request.params.id }
+      return user
     },
   )
 
@@ -94,7 +94,7 @@ export default async function (fastify) {
       schema: schema['/users/{id}'].DELETE.args.properties,
     },
     async (request, reply) => {
-      const user = await db.delete(schemas.users)
+      const [user] = await db.delete(schemas.users)
         .where(eq(schemas.users.id, request.params.id))
         .returning()
       fastify.assert(user, 404)
