@@ -6,6 +6,9 @@ import { buildCourse, buildCourseLesson, buildUser } from '../lib/data.js'
 export default async (db) => {
   const [_user1] = await db.insert(schemas.users).values(buildUser()).returning()
   const [user2] = await db.insert(schemas.users).values(buildUser()).returning()
+  const [_user3] = await db.insert(schemas.users).values(buildUser({
+    email: 'support@hexlet.io', fullName: 'Тото Поддерживающий',
+  })).returning()
   const [_course1] = await db.insert(schemas.courses).values(
     buildCourse({ creatorId: user2.id }),
   ).returning()

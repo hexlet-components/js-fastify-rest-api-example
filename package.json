@@ -13,20 +13,22 @@
     "@fastify/sensible": "^5.6.0",
     "@fastify/type-provider-typebox": "^4.1.0",
     "@geut/openapi-box": "^5.0.6",
+    "@stoplight/prism-cli": "^5.10.0",
     "@typespec/compiler": "^0.59.1",
     "@vinejs/vine": "^2.1.0",
-    "better-sqlite3": "^11.2.1",
+    "better-sqlite3": "^11.3.0",
     "drizzle-orm": "^0.33.0",
     "fastify": "^4.28.1",
     "fastify-cli": "^6.3.0",
     "fastify-plugin": "^4.5.1",
     "lodash": "^4.17.21",
-    "npm-check-updates": "^17.1.0"
+    "node-jq": "^6.0.1",
+    "npm-check-updates": "^17.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.1",
-    "@faker-js/faker": "^8.4.1",
-    "@stylistic/eslint-plugin": "^2.7.1",
+    "@eslint/js": "^9.10.0",
+    "@faker-js/faker": "^9.0.1",
+    "@stylistic/eslint-plugin": "^2.8.0",
     "@types/better-sqlite3": "^7.6.11",
     "@types/lodash": "^4.17.7",
     "@typespec/compiler": "latest",
@@ -35,7 +37,7 @@
     "@typespec/openapi3": "latest",
     "@typespec/rest": "latest",
     "drizzle-kit": "^0.24.2",
-    "eslint": "^9.9.1",
+    "eslint": "^9.10.0",
     "globals": "^15.9.0"
   },
   "scripts": {

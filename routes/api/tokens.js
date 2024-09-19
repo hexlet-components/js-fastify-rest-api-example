@@ -1,4 +1,6 @@
+import { eq } from 'drizzle-orm'
 import { schema } from '../../schema.js'
+import * as schemas from '../../db/schema.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -19,10 +21,13 @@ export default async function (fastify) {
         },
       },
     },
-    async (_request, reply) => {
-      const client = await db.query.users.findFirst()
-      fastify.assert.ok(client)
-      const token = fastify.jwt.sign({ user: { id: client.id } })
+    async (request, reply) => {
+      const client = await db.query.users.findFirst({
+        // Добавить проверку пароля
+        where: eq(schemas.users.email, request.body.email),
+      })
+      fastify.assert.ok(client, 404)
+      const token = fastify.jwt.sign({ id: client.id })
       return reply.code(201)
         .send({ token })
     },

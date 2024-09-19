@@ -14,7 +14,7 @@ export default async function (fastify) {
   fastify.get(
     '/users',
     {
-      onRequest: [fastify.authenticate],
+      // onRequest: [fastify.authenticate],
       schema: {
         querystring: schema['/users'].GET.args.properties.query,
       },
@@ -25,7 +25,7 @@ export default async function (fastify) {
         .users
         .findMany({
           orderBy: asc(schemas.users.id),
-          ...getPagingOptions(page),
+          ...getPagingOptions(page, 1),
         })
 
       return users
@@ -42,7 +42,7 @@ export default async function (fastify) {
         where: eq(schemas.users.id, request.params.id),
       })
       fastify.assert(user, 404)
-      return { id: request.params.id }
+      return user
     },
   )
 
@@ -77,8 +77,9 @@ export default async function (fastify) {
       schema: schema['/users/{id}'].PATCH.args.properties,
     },
     async (request) => {
+      const validated = await User.validate(db, request.body)
       const [user] = await db.update(schemas.users)
-        .set(request.body)
+        .set(validated)
         .where(eq(schemas.users.id, request.params.id))
         .returning()
       fastify.assert(user, 404)

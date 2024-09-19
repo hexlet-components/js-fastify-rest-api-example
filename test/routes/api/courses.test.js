@@ -10,7 +10,7 @@ test('get courses', async (t) => {
   const res = await app.inject({
     url: '/api/courses',
   })
-  assert.equal(res.statusCode, 200)
+  assert.equal(res.statusCode, 200, res.body)
 })
 
 test('get courses/:id', async (t) => {
@@ -22,7 +22,7 @@ test('get courses/:id', async (t) => {
   const res = await app.inject({
     url: `/api/courses/${course.id}`,
   })
-  assert.equal(res.statusCode, 200)
+  assert.equal(res.statusCode, 200, res.body)
   assert.deepStrictEqual(JSON.parse(res.payload), { id: course.id })
 })
 
@@ -57,7 +57,7 @@ test('patch courses/:id', async (t) => {
     },
     body: _.pick(buildCourse(), ['name', 'description']),
   })
-  assert.equal(res.statusCode, 200)
+  assert.equal(res.statusCode, 200, res.body)
 })
 
 test('delete courses/:id', async (t) => {
@@ -75,5 +75,5 @@ test('delete courses/:id', async (t) => {
     url: `/api/courses/${course.id}`,
   })
 
-  assert.equal(res.statusCode, 204)
+  assert.equal(res.statusCode, 204, res.body)
 })

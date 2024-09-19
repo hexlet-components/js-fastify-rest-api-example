@@ -3,9 +3,10 @@ import uniqueRule from '../rules/unique.js'
 import { users } from '../db/schema.js'
 
 const schema = vine.object({
-  email: vine.string().email()
+  email: vine.string()
+    .email()
+    .normalizeEmail({ all_lowercase: true })
     .use(uniqueRule({ schema: users }))
-    .transform(value => value.toLowerCase()),
 }).allowUnknownProperties()
 const validator = vine.compile(schema)
 

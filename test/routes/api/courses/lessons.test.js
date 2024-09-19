@@ -12,7 +12,7 @@ test('get lessons', async (t) => {
   const res = await app.inject({
     url: `/api/courses/${lesson.courseId}/lessons`,
   })
-  assert.equal(res.statusCode, 200)
+  assert.equal(res.statusCode, 200, res.body)
 })
 
 test('get lessons/:id', async (t) => {
@@ -24,7 +24,7 @@ test('get lessons/:id', async (t) => {
   const res = await app.inject({
     url: `/api/courses/${lesson.courseId}/lessons/${lesson.id}`,
   })
-  assert.equal(res.statusCode, 200)
+  assert.equal(res.statusCode, 200, res.body)
   // assert.deepStrictEqual(JSON.parse(res.payload), { id: course.id })
 })
 

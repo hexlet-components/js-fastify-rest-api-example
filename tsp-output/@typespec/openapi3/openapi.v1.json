@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Fastify Rest Api Example",
+    "title": "Hexlet Fastify Rest Api Example",
     "version": "v1"
   },
   "tags": [],
@@ -923,10 +923,13 @@
           },
           "fullName": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "minLength": 2,
+            "maxLength": 100
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "format": "email"
           },
           "createdAt": {
             "type": "string",
@@ -972,7 +975,7 @@
   },
   "servers": [
     {
-      "url": "https://code-basics.com",
+      "url": "https://localhost",
       "description": "Single server endpoint",
       "variables": {}
     }

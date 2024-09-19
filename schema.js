@@ -152,8 +152,8 @@ const ComponentsSchemasAuthInfo = T.Object({
 })
 const ComponentsSchemasUser = T.Object({
   id: T.Number(),
-  fullName: T.Union([T.Null(), T.String()]),
-  email: T.String(),
+  fullName: T.Union([T.Null(), T.String({ minLength: 2, maxLength: 100 })]),
+  email: T.String({ format: 'email' }),
   createdAt: T.String({ format: 'date-time' })
 })
 const ComponentsSchemasUserCreateDto = T.Object({

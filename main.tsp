@@ -10,9 +10,9 @@ using TypeSpec.Rest;
 using TypeSpec.JsonSchema;
 
 @service({
-  title: "Fastify Rest Api Example",
+  title: "Hexlet Fastify Rest Api Example",
 })
-@server("https://code-basics.com", "Single server endpoint")
+@server("https://localhost", "Single server endpoint")
 @jsonSchema
 @versioned(Versions)
 namespace FastifyRestApiExample;
@@ -69,8 +69,14 @@ model Timestamps {
 
 model User {
   id: numeric;
+
+  @minLength(2)
+  @maxLength(100)
   fullName: string | null;
+
+  @format("email")
   email: string;
+
   ...Timestamps;
 }
 
