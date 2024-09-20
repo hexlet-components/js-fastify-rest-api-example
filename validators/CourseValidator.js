@@ -6,7 +6,7 @@ const schema = vine.object({
 }).allowUnknownProperties()
 const validator = vine.compile(schema)
 
-class Course {
+class CourseValidator {
   /**
    * @param {import('../types.js').DrizzleDB} db
    * @param {Partial<import('../types.js').Course>} data
@@ -16,4 +16,4 @@ class Course {
   }
 }
 
-export default Course
+export default CourseValidator

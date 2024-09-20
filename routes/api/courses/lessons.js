@@ -3,7 +3,7 @@ import { and, asc, eq } from 'drizzle-orm'
 import * as schemas from '../../../db/schema.js'
 import { schema } from '../../../schema.js'
 import { getPagingOptions } from '../../../lib/utils.js'
-import Lesson from '../../../models/Course/Lesson.js'
+import LessonValidator from '../../../validators/Course/LessonValidator.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -71,7 +71,7 @@ export default async function (fastify) {
 
       fastify.assert.equal(request.user.id, course.creatorId, 403)
 
-      const validated = await Lesson.validate(db, request.body)
+      const validated = await LessonValidator.validate(db, request.body)
       validated.courseId = request.params.courseId
 
       const [lesson] = await db.insert(schemas.courseLessons)

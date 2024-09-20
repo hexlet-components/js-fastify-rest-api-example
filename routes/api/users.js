@@ -3,7 +3,7 @@ import { asc, eq } from 'drizzle-orm'
 import * as schemas from '../../db/schema.js'
 import { schema } from '../../schema.js'
 import { getPagingOptions } from '../../lib/utils.js'
-import User from '../../models/User.js'
+import UserValidator from '../../validators/UserValidator.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -59,7 +59,7 @@ export default async function (fastify) {
       },
     },
     async (request, reply) => {
-      const validated = await User.validate(db, request.body)
+      const validated = await UserValidator.validate(db, request.body)
 
       const [user] = await db.insert(schemas.users)
         .values(validated)
@@ -77,7 +77,7 @@ export default async function (fastify) {
       schema: schema['/users/{id}'].PATCH.args.properties,
     },
     async (request) => {
-      const validated = await User.validate(db, request.body)
+      const validated = await UserValidator.validate(db, request.body)
       const [user] = await db.update(schemas.users)
         .set(validated)
         .where(eq(schemas.users.id, request.params.id))

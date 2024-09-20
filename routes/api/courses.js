@@ -3,7 +3,7 @@ import { asc, eq } from 'drizzle-orm'
 import * as schemas from '../../db/schema.js'
 import { schema } from '../../schema.js'
 import { getPagingOptions } from '../../lib/utils.js'
-import Course from '../../models/Course.js'
+import CourseValidator from '../../validators/CourseValidator.js'
 
 /**
   * @param {import('fastify').FastifyTypebox} fastify
@@ -55,7 +55,7 @@ export default async function (fastify) {
       },
     },
     async (request, reply) => {
-      const validated = await Course.validate(db, request.body)
+      const validated = await CourseValidator.validate(db, request.body)
       validated.creatorId = request.user.id
 
       const [course] = await db.insert(schemas.courses)

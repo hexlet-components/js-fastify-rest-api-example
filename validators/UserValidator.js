@@ -7,10 +7,10 @@ const schema = vine.object({
     .email()
     .normalizeEmail({ all_lowercase: true })
     .use(uniqueRule({ schema: users }))
-}).allowUnknownProperties()
+})
 const validator = vine.compile(schema)
 
-class User {
+class UserValidator {
   /**
    * @param {import('../types.js').DrizzleDB} db
    * @param {Partial<import('../types.js').User>} data
@@ -20,4 +20,4 @@ class User {
   }
 }
 
-export default User
+export default UserValidator
