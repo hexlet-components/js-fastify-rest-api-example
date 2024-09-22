@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Hexlet Fastify Rest Api Example",
-    "version": "v1"
+    "version": "v2"
   },
   "tags": [],
   "paths": {
@@ -908,7 +908,7 @@
         "type": "object",
         "required": [
           "id",
-          "fullName",
+          "phone",
           "email",
           "createdAt"
         ],
@@ -916,11 +916,8 @@
           "id": {
             "type": "number"
           },
-          "fullName": {
-            "type": "string",
-            "nullable": true,
-            "minLength": 2,
-            "maxLength": 100
+          "phone": {
+            "type": "string"
           },
           "email": {
             "type": "string",

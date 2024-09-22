@@ -2,23 +2,19 @@ import "@typespec/http";
 import "@typespec/rest";
 import "@typespec/versioning";
 import "@typespec/openapi3";
-import "@typespec/json-schema";
 
 using TypeSpec.Versioning;
 using TypeSpec.Http;
 using TypeSpec.Rest;
-using TypeSpec.JsonSchema;
 
 @service({
   title: "Hexlet Fastify Rest Api Example",
 })
-@server("https://localhost", "Single server endpoint")
-@jsonSchema
 @versioned(Versions)
 namespace FastifyRestApiExample;
 
 enum Versions {
-  v1,
+  v1, v2
 }
 
 /**
@@ -73,6 +69,7 @@ model User {
   @minLength(2)
   @maxLength(100)
   fullName: string | null;
+  @added(Versions.v2) phone: string;
 
   @format("email")
   email: string;
@@ -129,9 +126,9 @@ model CourseLessonCreateDTO {
 }
 
 @route("/users")
-@useAuth(BearerAuth)
 namespace users {
   @get
+  @useAuth(BearerAuth)
   op index(@query page?: numeric = 1): {
     @body users: {
       data: User[];
@@ -139,22 +136,25 @@ namespace users {
   };
 
   @get
+  @useAuth(BearerAuth)
   op show(@path id: numeric): {
-    @body user: User;
+    @body _: User;
   } | NotFoundError;
 
   @post
-  op create(@body user: UserCreateDTO): {
-    @body user: User;
+  op create(@body _: UserCreateDTO): {
+    @body _: User;
     @statusCode statusCode: 201;
   } | UnprocessableEntityError;
 
   @patch
+  @useAuth(BearerAuth)
   op update(@path id: numeric, @body user: UserEditDTO): {
     @body user: User;
   } | NotFoundError | UnprocessableEntityError;
 
   @delete
+  @useAuth(BearerAuth)
   op destroy(@path id: numeric): {
     @statusCode statusCode: 204;
   } | NotFoundError;

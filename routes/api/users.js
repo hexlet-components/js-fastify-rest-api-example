@@ -28,7 +28,8 @@ export default async function (fastify) {
           ...getPagingOptions(page, 1),
         })
 
-      return users
+      // return users
+      return { data: users, meta: {} }
     })
 
   fastify.get(
@@ -49,7 +50,6 @@ export default async function (fastify) {
   fastify.post(
     '/users',
     {
-      onRequest: [fastify.authenticate],
       schema: {
         body: schema['/users'].POST.args.properties.body,
         response: {

@@ -27,6 +27,9 @@ types-to-typebox:
 
 types: types-to-openapi types-to-typebox
 
+mock:
+	npx prism mock ./tsp-output/@typespec/openapi3/openapi.v1.json
+
 tsp-build:
 
 .PHONY: test routes

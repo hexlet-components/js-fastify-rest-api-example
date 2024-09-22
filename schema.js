@@ -490,7 +490,7 @@ const _components = {
     User: CloneType(ComponentsSchemasUser),
     UserCreateDTO: CloneType(ComponentsSchemasUserCreateDto),
     UserEditDTO: CloneType(ComponentsSchemasUserEditDto),
-    Versions: T.Literal('v1')
+    Versions: T.Union([T.Literal('v1'), T.Literal('v2')])
   }
 }
 
