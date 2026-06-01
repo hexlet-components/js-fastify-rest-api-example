@@ -39,10 +39,11 @@
     "@typespec/rest": "^0.82.0",
     "@typespec/versioning": "^0.82.0",
     "drizzle-kit": "^0.31.10",
-    "globals": "^17.6.0"
+    "globals": "^17.6.0",
+    "vitest": "^4.1.8"
   },
   "scripts": {
-    "test": "node --test test/**/*.test.ts",
+    "test": "vitest run",
     "start": "fastify start -l info app.ts",
     "dev": "FASTIFY_AUTOLOAD_TYPESCRIPT=1 fastify start -w -l info -P app.ts"
   },

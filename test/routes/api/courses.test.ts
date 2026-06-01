@@ -1,11 +1,11 @@
-import { test } from 'node:test'
+import { test } from 'vitest'
 import * as assert from 'node:assert'
 import { getAuthHeader, build } from '../../helper.ts'
 import { buildCourse } from '../../../lib/data.ts'
 import { pick } from 'es-toolkit'
 
-test('get courses', async (t) => {
-  const app = await build(t)
+test('get courses', async () => {
+  const app = await build()
 
   const res = await app.inject({
     url: '/courses',
@@ -13,8 +13,8 @@ test('get courses', async (t) => {
   assert.equal(res.statusCode, 200, res.body)
 })
 
-test('get courses/:id', async (t) => {
-  const app = await build(t)
+test('get courses/:id', async () => {
+  const app = await build()
 
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
@@ -25,8 +25,8 @@ test('get courses/:id', async (t) => {
   assert.equal(res.statusCode, 200, res.body)
 })
 
-test('post courses', async (t) => {
-  const app = await build(t)
+test('post courses', async () => {
+  const app = await build()
   const body = buildCourse()
 
   const authHeader = await getAuthHeader(app)
@@ -41,8 +41,8 @@ test('post courses', async (t) => {
   assert.equal(res.statusCode, 201, res.body)
 })
 
-test('put courses/:id', async (t) => {
-  const app = await build(t)
+test('put courses/:id', async () => {
+  const app = await build()
 
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
@@ -59,8 +59,8 @@ test('put courses/:id', async (t) => {
   assert.equal(res.statusCode, 200, res.body)
 })
 
-test('delete courses/:id', async (t) => {
-  const app = await build(t)
+test('delete courses/:id', async () => {
+  const app = await build()
 
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)

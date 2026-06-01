@@ -1,10 +1,10 @@
-import { test } from 'node:test'
+import { test } from 'vitest'
 import * as assert from 'node:assert'
 import { build, getAuthHeader } from '../../helper.ts'
 import { buildUser } from '../../../lib/data.ts'
 
-test('get users', async (t) => {
-  const app = await build(t)
+test('get users', async () => {
+  const app = await build()
 
   const authHeader = await getAuthHeader(app)
   const res = await app.inject({
@@ -16,8 +16,8 @@ test('get users', async (t) => {
   assert.equal(res.statusCode, 200, res.body)
 })
 
-test('get users/:id', async (t) => {
-  const app = await build(t)
+test('get users/:id', async () => {
+  const app = await build()
 
   const user = await app.db.query.users.findFirst()
   assert.ok(user)
@@ -33,8 +33,8 @@ test('get users/:id', async (t) => {
   // assert.deepStrictEqual(JSON.parse(res.payload), { id: user.id })
 })
 
-test('post users', async (t) => {
-  const app = await build(t)
+test('post users', async () => {
+  const app = await build()
   const body = buildUser()
 
   const authHeader = await getAuthHeader(app)
@@ -49,8 +49,8 @@ test('post users', async (t) => {
   assert.equal(res.statusCode, 201, res.body)
 })
 
-test('post users (unique email)', async (t) => {
-  const app = await build(t)
+test('post users (unique email)', async () => {
+  const app = await build()
 
   const user = await app.db.query.users.findFirst()
   assert.ok(user)
@@ -67,8 +67,8 @@ test('post users (unique email)', async (t) => {
   assert.equal(res.statusCode, 422, res.body)
 })
 
-test('patch users/:id', async (t) => {
-  const app = await build(t)
+test('patch users/:id', async () => {
+  const app = await build()
 
   const user = await app.db.query.users.findFirst()
   assert.ok(user)
@@ -85,8 +85,8 @@ test('patch users/:id', async (t) => {
   assert.equal(res.statusCode, 200, res.body)
 })
 
-test('delete users/:id', async (t) => {
-  const app = await build(t)
+test('delete users/:id', async () => {
+  const app = await build()
 
   const user = await app.db.query.users.findFirst()
   assert.ok(user)

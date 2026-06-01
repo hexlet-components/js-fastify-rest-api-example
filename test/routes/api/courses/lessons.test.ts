@@ -1,10 +1,10 @@
-import { test } from 'node:test'
+import { test } from 'vitest'
 import * as assert from 'node:assert'
 import { getAuthHeader, build } from '../../../helper.ts'
 import { buildCourseLesson } from '../../../../lib/data.ts'
 
-test('get lessons', async (t) => {
-  const app = await build(t)
+test('get lessons', async () => {
+  const app = await build()
 
   const lesson = await app.db.query.courseLessons.findFirst()
   assert.ok(lesson)
@@ -15,8 +15,8 @@ test('get lessons', async (t) => {
   assert.equal(res.statusCode, 200, res.body)
 })
 
-test('get lessons/:id', async (t) => {
-  const app = await build(t)
+test('get lessons/:id', async () => {
+  const app = await build()
 
   const lesson = await app.db.query.courseLessons.findFirst()
   assert.ok(lesson)
@@ -27,8 +27,8 @@ test('get lessons/:id', async (t) => {
   assert.equal(res.statusCode, 200, res.body)
 })
 
-test('post lessons', async (t) => {
-  const app = await build(t)
+test('post lessons', async () => {
+  const app = await build()
   const course = await app.db.query.courses.findFirst()
   assert.ok(course)
 

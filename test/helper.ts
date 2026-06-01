@@ -1,5 +1,5 @@
-import type { TestContext } from 'node:test'
-import assert from 'assert'
+import { onTestFinished } from 'vitest'
+import assert from 'node:assert'
 import helper from 'fastify-cli/helper.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -31,7 +31,7 @@ function serverConfig() {
   }
 }
 
-async function build(t: TestContext) {
+async function build() {
   // you can set all the options supported by the fastify CLI command
   const argv = [AppPath]
 
@@ -41,7 +41,7 @@ async function build(t: TestContext) {
   const app = await helper.build(argv, config(), serverConfig())
 
   // tear down our app after we are done
-  t.after(() => app.close())
+  onTestFinished(() => app.close())
 
   return app
 }
