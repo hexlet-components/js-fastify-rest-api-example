@@ -30,7 +30,7 @@
     "@faker-js/faker": "^10.5.0",
     "@hey-api/openapi-ts": "0.99.0",
     "@stoplight/prism-cli": "^5.16.0",
-    "@types/better-sqlite3": "^7.6.13",
+    "@types/better-sqlite3": "^9.6.0",
     "@typespec/compiler": "^1.4.0",
     "@typespec/http": "^1.4.0",
     "@typespec/json-schema": "^1.14.0",
