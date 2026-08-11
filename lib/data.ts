@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker';
-import type { Course, CourseLesson, User } from '../types/index.js';
+import { faker } from "@faker-js/faker";
+import type { Course, CourseLesson, User } from "../types/index.js";
 
 export function buildUser(params: Partial<User> = {}) {
   const user = {

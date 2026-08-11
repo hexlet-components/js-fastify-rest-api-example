@@ -1,20 +1,20 @@
-import { test } from 'vitest'
-import * as assert from 'node:assert'
-import { build } from '../../helper.ts'
+import { test } from "vitest";
+import * as assert from "node:assert";
+import { build } from "../../helper.ts";
 
-test('post tokens', async () => {
-  const app = await build()
+test("post tokens", async () => {
+  const app = await build();
 
-  const user = await app.db.query.users.findFirst()
-  assert.ok(user)
+  const user = await app.db.query.users.findFirst();
+  assert.ok(user);
 
   const res = await app.inject({
-    method: 'post',
+    method: "post",
     url: `/tokens`,
     body: {
       email: user.email,
-      password: '',
+      password: "",
     },
-  })
-  assert.equal(res.statusCode, 201, res.body)
-})
+  });
+  assert.equal(res.statusCode, 201, res.body);
+});

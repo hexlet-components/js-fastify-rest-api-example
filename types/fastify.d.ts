@@ -1,5 +1,5 @@
-import type { drizzle } from 'drizzle-orm/better-sqlite3';
-import '@fastify/jwt';
+import type { drizzle } from "drizzle-orm/better-sqlite3";
+import "@fastify/jwt";
 // import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 // import { Type } from '@sinclair/typebox'
 import type {
@@ -10,20 +10,16 @@ import type {
   RawReplyDefaultExpression,
   RawRequestDefaultExpression,
   RawServerDefault,
-} from 'fastify';
-import type * as schemas from '../db/schema.ts';
+} from "fastify";
+import type * as schemas from "../db/schema.ts";
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyRequest {
     db: ReturnType<typeof drizzle<typeof schemas>>;
   }
-  interface FastifyInstance
-    extends FastifyJwtNamespace<{ namespace: 'security' }> {
+  interface FastifyInstance extends FastifyJwtNamespace<{ namespace: "security" }> {
     db: ReturnType<typeof drizzle<typeof schemas>>;
-    authenticate: (
-      request: FastifyRequest,
-      reply: FastifyReply,
-    ) => Promise<void>;
+    authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
   // type FastifyTypebox = FastifyInstance<
   //   RawServerDefault,
@@ -34,7 +30,7 @@ declare module 'fastify' {
   // >;
 }
 
-declare module '@fastify/jwt' {
+declare module "@fastify/jwt" {
   interface FastifyJWT {
     payload: { id: number }; // payload type is used for signing and verifying
     user: {

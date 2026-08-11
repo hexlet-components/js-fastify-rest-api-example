@@ -1,4 +1,4 @@
-import type { User } from '../types/index.ts';
+import type { User } from "../types/index.ts";
 
 export default class UserSerializer {
   index(users: User[]) {

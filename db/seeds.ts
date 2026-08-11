@@ -1,24 +1,18 @@
-import { buildCourse, buildCourseLesson, buildUser } from '../lib/data.ts';
-import type { DrizzleDB } from '../types/index.ts';
-import * as schemas from './schema.ts';
+import { buildCourse, buildCourseLesson, buildUser } from "../lib/data.ts";
+import type { DrizzleDB } from "../types/index.ts";
+import * as schemas from "./schema.ts";
 /**
  * @param {import("drizzle-orm/better-sqlite3").BetterSQLite3Database<typeof schemas>} db
  */
 export default async (db: DrizzleDB) => {
-  const [_user1] = await db
-    .insert(schemas.users)
-    .values(buildUser())
-    .returning();
-  const [user2] = await db
-    .insert(schemas.users)
-    .values(buildUser())
-    .returning();
+  const [_user1] = await db.insert(schemas.users).values(buildUser()).returning();
+  const [user2] = await db.insert(schemas.users).values(buildUser()).returning();
   const [_user3] = await db
     .insert(schemas.users)
     .values(
       buildUser({
-        email: 'support@hexlet.io',
-        fullName: 'Тото Поддерживающий',
+        email: "support@hexlet.io",
+        fullName: "Тото Поддерживающий",
       }),
     )
     .returning();
@@ -30,7 +24,5 @@ export default async (db: DrizzleDB) => {
     .insert(schemas.courses)
     .values(buildCourse({ creatorId: user2.id }))
     .returning();
-  await db
-    .insert(schemas.courseLessons)
-    .values(buildCourseLesson({ courseId: course2.id }));
+  await db.insert(schemas.courseLessons).values(buildCourseLesson({ courseId: course2.id }));
 };

@@ -1,7 +1,7 @@
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
 
-import * as schemas from '../../db/schema.ts';
-import { defineHandlers, ensure } from '../../lib/utils.ts';
+import * as schemas from "../../db/schema.ts";
+import { defineHandlers, ensure } from "../../lib/utils.ts";
 
 const handlers = defineHandlers({
   async tokensCreate(request, reply) {

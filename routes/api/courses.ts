@@ -1,12 +1,9 @@
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq } from "drizzle-orm";
 
-import * as schemas from '../../db/schema.ts';
-import { defineHandlers, ensure, getPagingOptions } from '../../lib/utils.ts';
-import type {
-  CourseCreateDto,
-  CourseEditDto,
-} from '../../types/handlers/index.ts';
-import CourseValidator from '../../validators/CourseValidator.ts';
+import * as schemas from "../../db/schema.ts";
+import { defineHandlers, ensure, getPagingOptions } from "../../lib/utils.ts";
+import type { CourseCreateDto, CourseEditDto } from "../../types/handlers/index.ts";
+import CourseValidator from "../../validators/CourseValidator.ts";
 
 const handlers = defineHandlers({
   async coursesIndex(request, reply) {
@@ -28,29 +25,20 @@ const handlers = defineHandlers({
 
   async coursesCreate(request, reply) {
     await request.jwtVerify();
-    const validated = await CourseValidator.validate<CourseCreateDto>(
-      request.db,
-      request.body,
-    );
+    const validated = await CourseValidator.validate<CourseCreateDto>(request.db, request.body);
     const creatorId = request.user?.id;
     const values = {
       ...validated,
       creatorId: creatorId,
     };
 
-    const [course] = await request.db
-      .insert(schemas.courses)
-      .values(values)
-      .returning();
+    const [course] = await request.db.insert(schemas.courses).values(values).returning();
     return reply.code(201).send(course);
   },
 
   async coursesUpdate(request, reply) {
     await request.jwtVerify();
-    const validated = await CourseValidator.validate<CourseEditDto>(
-      request.db,
-      request.body,
-    );
+    const validated = await CourseValidator.validate<CourseEditDto>(request.db, request.body);
     const [course] = await request.db
       .update(schemas.courses)
       .set(validated)

@@ -1,5 +1,5 @@
-import type { drizzle } from 'drizzle-orm/better-sqlite3';
-import type * as schemas from '../db/schema.ts';
+import type { drizzle } from "drizzle-orm/better-sqlite3";
+import type * as schemas from "../db/schema.ts";
 
 export type DrizzleSchema = (typeof schemas)[keyof typeof schemas];
 export type DrizzleDB = ReturnType<typeof drizzle<typeof schemas>>;

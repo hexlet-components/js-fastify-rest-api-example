@@ -1,4 +1,4 @@
-import type { RouteHandlers } from '../types/handlers/fastify.gen.ts';
+import type { RouteHandlers } from "../types/handlers/fastify.gen.ts";
 
 export default {
   // usersIndex(request, reply) {

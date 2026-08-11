@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/complexity/noStaticOnlyClass: - */
 
-import { object, parseAsync, string } from 'valibot';
-import type { DrizzleDB } from '../types/index.ts';
+import { object, parseAsync, string } from "valibot";
+import type { DrizzleDB } from "../types/index.ts";
 
 // Keep validation permissive: accept fields used by routes
 // and let handlers add/override creatorId.

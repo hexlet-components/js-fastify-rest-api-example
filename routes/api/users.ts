@@ -1,8 +1,8 @@
-import { asc, eq } from 'drizzle-orm';
-import * as schemas from '../../db/schema.ts';
-import { defineHandlers, ensure, getPagingOptions } from '../../lib/utils.ts';
-import type { UserCreateDto, UserEditDto } from '../../types/handlers/index.ts';
-import UserValidator from '../../validators/UserValidator.ts';
+import { asc, eq } from "drizzle-orm";
+import * as schemas from "../../db/schema.ts";
+import { defineHandlers, ensure, getPagingOptions } from "../../lib/utils.ts";
+import type { UserCreateDto, UserEditDto } from "../../types/handlers/index.ts";
+import UserValidator from "../../validators/UserValidator.ts";
 
 const handlers = defineHandlers({
   async usersIndex(request, reply) {
@@ -23,23 +23,14 @@ const handlers = defineHandlers({
   },
 
   async usersCreate(request, reply) {
-    const validated = await UserValidator.validate<UserCreateDto>(
-      request.db,
-      request.body,
-    );
-    const [user] = await request.db
-      .insert(schemas.users)
-      .values(validated)
-      .returning();
+    const validated = await UserValidator.validate<UserCreateDto>(request.db, request.body);
+    const [user] = await request.db.insert(schemas.users).values(validated).returning();
 
     return reply.code(201).send(user);
   },
 
   async usersUpdate(request, reply) {
-    const validated = await UserValidator.validate<UserEditDto>(
-      request.db,
-      request.body,
-    );
+    const validated = await UserValidator.validate<UserEditDto>(request.db, request.body);
     const [user] = await request.db
       .update(schemas.users)
       .set(validated)

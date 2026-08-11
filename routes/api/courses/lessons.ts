@@ -1,13 +1,9 @@
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from "drizzle-orm";
 
-import * as schemas from '../../../db/schema.ts';
-import {
-  defineHandlers,
-  ensure,
-  getPagingOptions,
-} from '../../../lib/utils.ts';
-import type { CourseLessonCreateDto } from '../../../types/handlers/index.ts';
-import LessonValidator from '../../../validators/Course/LessonValidator.ts';
+import * as schemas from "../../../db/schema.ts";
+import { defineHandlers, ensure, getPagingOptions } from "../../../lib/utils.ts";
+import type { CourseLessonCreateDto } from "../../../types/handlers/index.ts";
+import LessonValidator from "../../../validators/Course/LessonValidator.ts";
 
 const handlers = defineHandlers({
   async coursesLessonsIndex(request, reply) {
@@ -41,10 +37,7 @@ const handlers = defineHandlers({
       ...validated,
       courseId: request.params.courseId,
     };
-    const [lesson] = await request.db
-      .insert(schemas.courseLessons)
-      .values(values)
-      .returning();
+    const [lesson] = await request.db.insert(schemas.courseLessons).values(values).returning();
     return reply.code(201).send(lesson);
   },
 });

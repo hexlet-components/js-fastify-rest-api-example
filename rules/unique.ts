@@ -1,6 +1,6 @@
-import { eq } from 'drizzle-orm';
-import { checkAsync } from 'valibot';
-import type { DrizzleDB, DrizzleSchema } from '../types/index.ts';
+import { eq } from "drizzle-orm";
+import { checkAsync } from "valibot";
+import type { DrizzleDB, DrizzleSchema } from "../types/index.ts";
 
 type Options = {
   schema: DrizzleSchema;
