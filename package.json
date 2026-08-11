@@ -27,7 +27,6 @@
     "typescript": "^7.0.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.6",
     "@faker-js/faker": "^10.5.0",
     "@hey-api/openapi-ts": "0.99.0",
     "@stoplight/prism-cli": "^5.16.0",
@@ -40,14 +39,21 @@
     "@typespec/versioning": "^0.84.0",
     "drizzle-kit": "^0.31.10",
     "globals": "^17.8.0",
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0",
     "vitest": "^4.1.10"
   },
   "scripts": {
     "test": "vitest run",
     "start": "fastify start -l info app.ts",
-    "dev": "FASTIFY_AUTOLOAD_TYPESCRIPT=1 fastify start -w -l info -P app.ts"
+    "dev": "FASTIFY_AUTOLOAD_TYPESCRIPT=1 fastify start -w -l info -P app.ts",
+    "lint": "oxlint --config=.oxlintrc.json .",
+    "lint:fix": "oxfmt --ignore-path=.oxfmtignore . && oxlint --config=.oxlintrc.json --fix .",
+    "format": "oxfmt --ignore-path=.oxfmtignore .",
+    "format:check": "oxfmt --ignore-path=.oxfmtignore --check ."
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "packageManager": "pnpm@11.20.0"
 }
