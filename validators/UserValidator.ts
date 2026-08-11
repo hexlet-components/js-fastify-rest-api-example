@@ -10,7 +10,7 @@ import {
 } from 'valibot';
 import { users } from '../db/schema.ts';
 import unique from '../rules/unique.ts';
-import type { DrizzleDB, User } from '../types/index.ts';
+import type { DrizzleDB } from '../types/index.ts';
 
 class UserValidator {
   static async validate<T>(db: DrizzleDB, data: T) {
