@@ -37,3 +37,6 @@ mock:
 tsp-build:
 
 .PHONY: test routes
+
+install:
+	pnpm install
