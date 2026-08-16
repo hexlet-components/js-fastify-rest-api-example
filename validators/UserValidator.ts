@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/complexity/noStaticOnlyClass: - */
-
 import { email, objectAsync, parseAsync, pipeAsync, string, toLowerCase } from "valibot";
 import { users } from "../db/schema.ts";
 import unique from "../rules/unique.ts";
