@@ -1,14 +1,9 @@
-import { object, parseAsync, string } from "valibot";
+import { zCourseLessonCreateDto } from "../../types/handlers/zod.gen.ts";
 import type { DrizzleDB } from "../../types/index.ts";
 
-const schema = object({
-  name: string(),
-  body: string(),
-});
-
 class LessonValidator {
-  static validate<T>(_db: DrizzleDB, data: T) {
-    return parseAsync(schema, data);
+  static validateCreate(_db: DrizzleDB, data: unknown) {
+    return zCourseLessonCreateDto.parseAsync(data);
   }
 }
 

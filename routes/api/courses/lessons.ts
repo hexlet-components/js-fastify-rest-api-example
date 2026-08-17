@@ -2,7 +2,6 @@ import { and, asc, eq } from "drizzle-orm";
 
 import * as schemas from "../../../db/schema.ts";
 import { defineHandlers, ensure, getPagingOptions } from "../../../lib/utils.ts";
-import type { CourseLessonCreateDto } from "../../../types/handlers/index.ts";
 import LessonValidator from "../../../validators/Course/LessonValidator.ts";
 
 const handlers = defineHandlers({
@@ -29,10 +28,7 @@ const handlers = defineHandlers({
 
   async coursesLessonsCreate(request, reply) {
     await request.jwtVerify();
-    const validated = await LessonValidator.validate<CourseLessonCreateDto>(
-      request.db,
-      request.body,
-    );
+    const validated = await LessonValidator.validateCreate(request.db, request.body);
     const values = {
       ...validated,
       courseId: request.params.courseId,

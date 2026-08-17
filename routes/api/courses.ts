@@ -2,7 +2,6 @@ import { asc, eq } from "drizzle-orm";
 
 import * as schemas from "../../db/schema.ts";
 import { defineHandlers, ensure, getPagingOptions } from "../../lib/utils.ts";
-import type { CourseCreateDto, CourseEditDto } from "../../types/handlers/index.ts";
 import CourseValidator from "../../validators/CourseValidator.ts";
 
 const handlers = defineHandlers({
@@ -25,7 +24,7 @@ const handlers = defineHandlers({
 
   async coursesCreate(request, reply) {
     await request.jwtVerify();
-    const validated = await CourseValidator.validate<CourseCreateDto>(request.db, request.body);
+    const validated = await CourseValidator.validateCreate(request.db, request.body);
     const creatorId = request.user?.id;
     const values = {
       ...validated,
@@ -38,7 +37,7 @@ const handlers = defineHandlers({
 
   async coursesUpdate(request, reply) {
     await request.jwtVerify();
-    const validated = await CourseValidator.validate<CourseEditDto>(request.db, request.body);
+    const validated = await CourseValidator.validateEdit(request.db, request.body);
     const [course] = await request.db
       .update(schemas.courses)
       .set(validated)

@@ -3,7 +3,7 @@ import type { AutoloadPluginOptions } from "@fastify/autoload";
 import AutoLoad from "@fastify/autoload";
 import type { FastifyPluginAsync, FastifyServerOptions } from "fastify";
 import glue from "fastify-openapi-glue";
-import { ValiError } from "valibot";
+import * as z from "zod";
 import serviceHandlers from "./routes/index.ts";
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
@@ -13,20 +13,12 @@ const options: AppOptions = {};
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
   fastify.setErrorHandler((error, _request, reply) => {
-    if (error instanceof ValiError) {
-      const errors = error.issues.map((issue) => {
-        const lastPathItem =
-          issue.path && issue.path.length > 0 ? issue.path[issue.path.length - 1] : undefined;
-        const field =
-          lastPathItem && "key" in lastPathItem && lastPathItem.key != null
-            ? String(lastPathItem.key)
-            : "";
-        return {
-          message: issue.message ?? "Validation error",
-          rule: String(issue.type ?? "validation"),
-          field,
-        };
-      });
+    if (error instanceof z.ZodError) {
+      const errors = error.issues.map((issue) => ({
+        message: issue.message,
+        rule: issue.code,
+        field: issue.path.map(String).join("."),
+      }));
       const errorDetail = {
         status: 422,
         title: "Validation Error",

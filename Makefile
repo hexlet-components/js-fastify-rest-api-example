@@ -29,7 +29,10 @@ generate-openapi-ts-types:
 	# pnpm exec openapi-typescript ./tsp-output/@typespec/openapi3/openapi.v1.json -o types/openapi.ts
 	pnpm exec openapi-ts
 
+# Форматтер обязателен последним шагом: генератор пишет в своём стиле, и без
+# него `make lint` падает на сгенерированных файлах после каждой генерации.
 generate-types: generate-openapi generate-openapi-ts-types
+	pnpm --silent run format
 
 mock:
 	pnpm exec prism mock ./tsp-output/@typespec/openapi3/openapi.v1.json
