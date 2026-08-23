@@ -1,0 +1,24 @@
+# Формат и линт до коммита, а не только в CI: make lint падал на них уже после
+# пуша, а generate-types в конце гоняет форматтер по всему дереву, и разъехаться
+# легко.
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: format
+      glob: "*.{ts,js,json,md,yml,yaml}"
+      run: pnpm exec oxfmt --ignore-path=.oxfmtignore {staged_files}
+      # Отформатированное возвращается в индекс, иначе коммит уедет в старом
+      # виде и format:check в CI всё равно упадёт.
+      stage_fixed: true
+
+    - name: lint
+      glob: "*.{ts,js}"
+      run: pnpm exec oxlint --config=.oxlintrc.json {staged_files}
+
+# Проверка типов только перед пушем: на каждый коммит это слишком долго, а
+# файлов по отдельности tsc не проверяет.
+pre-push:
+  jobs:
+    - name: types
+      run: pnpm exec tsc

@@ -35,6 +35,7 @@ import type {
   UsersDestroyErrors,
   UsersDestroyResponses,
   UsersIndexData,
+  UsersIndexErrors,
   UsersIndexResponses,
   UsersShowData,
   UsersShowErrors,
@@ -86,7 +87,7 @@ export type RouteHandlers = {
   }>;
   usersIndex: RouteHandler<{
     Querystring?: UsersIndexData["query"];
-    Reply: UsersIndexResponses;
+    Reply: UsersIndexErrors & UsersIndexResponses;
   }>;
   usersCreate: RouteHandler<{
     Body: UsersCreateData["body"];

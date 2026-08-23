@@ -70,6 +70,8 @@ export type {
   UsersDestroyResponse,
   UsersDestroyResponses,
   UsersIndexData,
+  UsersIndexError,
+  UsersIndexErrors,
   UsersIndexResponse,
   UsersIndexResponses,
   UsersShowData,

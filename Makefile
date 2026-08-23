@@ -44,6 +44,12 @@ lint:
 	pnpm --silent run lint
 	pnpm exec tsc
 	pnpm --silent run format:check
+	$(MAKE) lint-openapi
+
+# Линт контракта: правила и причины отключений — в redocly.yaml. Гоняется по
+# сгенерированному, а не по main.tsp: проверять надо то, что видит клиент.
+lint-openapi:
+	pnpm exec redocly lint tsp-output/@typespec/openapi3/openapi.v1.json
 
 lint-fix:
 	pnpm --silent run lint:fix
@@ -76,4 +82,4 @@ install:
 
 .PHONY: install test dev check-types deps-update routes migration-generate \
 	lint lint-fix generate-openapi generate-openapi-ts-types generate-types \
-	generate-check migration-check mock test-coverage
+	generate-check migration-check mock test-coverage lint-openapi

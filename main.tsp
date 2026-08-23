@@ -9,6 +9,13 @@ using TypeSpec.Http;
 using TypeSpec.OpenAPI;
 
 @service(#{ title: "Rest API Example" })
+@info(#{
+  license: #{
+    name: "ISC",
+    url: "https://opensource.org/license/isc-license-txt",
+  },
+})
+@server("http://localhost:3000", "Локальная разработка")
 @versioned(Versions)
 namespace FastifyRestApiExample;
 
@@ -138,6 +145,7 @@ model CourseLessonCreateDTO {
 
 @route("/users")
 namespace users {
+  @summary("Список пользователей")
   @operationId("usersIndex")
   @get
   @useAuth(BearerAuth)
@@ -145,15 +153,17 @@ namespace users {
     @body users: {
       data: User[];
     };
-  };
+  } | UnauthorizedError;
 
+  @summary("Пользователь по идентификатору")
   @get
   @useAuth(BearerAuth)
   @operationId("usersShow")
   op show(@path id: numeric): {
     @body _: User;
-  } | NotFoundError;
+  } | NotFoundError | UnauthorizedError;
 
+  @summary("Регистрация пользователя")
   @post
   @operationId("usersCreate")
   op create(@body _: UserCreateDTO): {
@@ -161,23 +171,26 @@ namespace users {
     @statusCode statusCode: 201;
   } | UnprocessableEntityError;
 
+  @summary("Изменение пользователя")
   @put
   @useAuth(BearerAuth)
   @operationId("usersUpdate")
   op update(@path id: numeric, @body user: UserEditDTO): {
     @body user: User;
-  } | NotFoundError | UnprocessableEntityError;
+  } | NotFoundError | UnprocessableEntityError | UnauthorizedError;
 
+  @summary("Удаление пользователя")
   @delete
   @useAuth(BearerAuth)
   @operationId("usersDestroy")
   op destroy(@path id: numeric): {
     @statusCode statusCode: 204;
-  } | NotFoundError;
+  } | NotFoundError | UnauthorizedError;
 }
 
 @route("/tokens")
 namespace tokens {
+  @summary("Выдача токена по email и паролю")
   @post
   @operationId("tokensCreate")
   op create(@body auth_info: AuthInfo): {
@@ -188,6 +201,7 @@ namespace tokens {
 
 @route("/courses")
 namespace courses {
+  @summary("Список курсов")
   @get
   @operationId("coursesIndex")
   op index(@query page?: numeric = 1): {
@@ -196,20 +210,23 @@ namespace courses {
     };
   };
 
+  @summary("Курс по идентификатору")
   @get
   @operationId("coursesShow")
   op show(@path id: numeric): {
     @body course: Course;
   } | NotFoundError;
 
+  @summary("Создание курса")
   @post
   @useAuth(BearerAuth)
   @operationId("coursesCreate")
   op create(@body course: CourseCreateDTO): {
     @body course: Course;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError;
+  } | UnprocessableEntityError | UnauthorizedError;
 
+  @summary("Изменение курса")
   @put
   @useAuth(BearerAuth)
   @operationId("coursesUpdate")
@@ -222,6 +239,7 @@ namespace courses {
     | UnauthorizedError
     | ForbiddenError;
 
+  @summary("Удаление курса")
   @delete
   @useAuth(BearerAuth)
   @operationId("coursesDestroy")
@@ -232,6 +250,7 @@ namespace courses {
 
 @route("/courses/{courseId}/lessons")
 namespace courses_lessons {
+  @summary("Список уроков курса")
   @get
   @operationId("coursesLessonsIndex")
   op index(@path courseId: numeric, @query page?: numeric = 1): {
@@ -240,12 +259,14 @@ namespace courses_lessons {
     };
   };
 
+  @summary("Урок курса")
   @get
   @operationId("coursesLessonsShow")
   op show(@path courseId: numeric, @path id: numeric): {
     @body lessons: CourseLesson;
   } | NotFoundError;
 
+  @summary("Добавление урока в курс")
   @post
   @useAuth(BearerAuth)
   @operationId("coursesLessonsCreate")

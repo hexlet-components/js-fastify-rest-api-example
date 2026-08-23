@@ -2,6 +2,10 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Rest API Example",
+    "license": {
+      "name": "ISC",
+      "url": "https://opensource.org/license/isc-license-txt"
+    },
     "version": "v1"
   },
   "tags": [],
@@ -9,6 +13,7 @@
     "/courses": {
       "get": {
         "operationId": "coursesIndex",
+        "summary": "Список курсов",
         "parameters": [
           {
             "name": "page",
@@ -47,6 +52,7 @@
       },
       "post": {
         "operationId": "coursesCreate",
+        "summary": "Создание курса",
         "parameters": [],
         "responses": {
           "201": {
@@ -55,6 +61,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Course"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
                 }
               }
             }
@@ -90,6 +106,7 @@
     "/courses/{courseId}/lessons": {
       "get": {
         "operationId": "coursesLessonsIndex",
+        "summary": "Список уроков курса",
         "parameters": [
           {
             "name": "courseId",
@@ -136,6 +153,7 @@
       },
       "post": {
         "operationId": "coursesLessonsCreate",
+        "summary": "Добавление урока в курс",
         "parameters": [
           {
             "name": "courseId",
@@ -218,6 +236,7 @@
     "/courses/{courseId}/lessons/{id}": {
       "get": {
         "operationId": "coursesLessonsShow",
+        "summary": "Урок курса",
         "parameters": [
           {
             "name": "courseId",
@@ -263,6 +282,7 @@
     "/courses/{id}": {
       "get": {
         "operationId": "coursesShow",
+        "summary": "Курс по идентификатору",
         "parameters": [
           {
             "name": "id",
@@ -298,6 +318,7 @@
       },
       "put": {
         "operationId": "coursesUpdate",
+        "summary": "Изменение курса",
         "parameters": [
           {
             "name": "id",
@@ -378,6 +399,7 @@
       },
       "delete": {
         "operationId": "coursesDestroy",
+        "summary": "Удаление курса",
         "parameters": [
           {
             "name": "id",
@@ -433,6 +455,7 @@
     "/tokens": {
       "post": {
         "operationId": "tokensCreate",
+        "summary": "Выдача токена по email и паролю",
         "parameters": [],
         "responses": {
           "201": {
@@ -481,6 +504,7 @@
     "/users": {
       "get": {
         "operationId": "usersIndex",
+        "summary": "Список пользователей",
         "parameters": [
           {
             "name": "page",
@@ -514,6 +538,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -524,6 +558,7 @@
       },
       "post": {
         "operationId": "usersCreate",
+        "summary": "Регистрация пользователя",
         "parameters": [],
         "responses": {
           "201": {
@@ -562,6 +597,7 @@
     "/users/{id}": {
       "get": {
         "operationId": "usersShow",
+        "summary": "Пользователь по идентификатору",
         "parameters": [
           {
             "name": "id",
@@ -579,6 +615,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
                 }
               }
             }
@@ -602,6 +648,7 @@
       },
       "put": {
         "operationId": "usersUpdate",
+        "summary": "Изменение пользователя",
         "parameters": [
           {
             "name": "id",
@@ -619,6 +666,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
                 }
               }
             }
@@ -662,6 +719,7 @@
       },
       "delete": {
         "operationId": "usersDestroy",
+        "summary": "Удаление пользователя",
         "parameters": [
           {
             "name": "id",
@@ -675,6 +733,16 @@
         "responses": {
           "204": {
             "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           },
           "404": {
             "description": "The server cannot find the requested resource.",
@@ -1005,5 +1073,12 @@
         "scheme": "Bearer"
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Локальная разработка",
+      "variables": {}
+    }
+  ]
 }
