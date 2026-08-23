@@ -27,7 +27,6 @@ const handlers = defineHandlers({
   },
 
   async coursesLessonsCreate(request, reply) {
-    await request.jwtVerify();
     const validated = await LessonValidator.validateCreate(request.db, request.body);
     const values = {
       ...validated,

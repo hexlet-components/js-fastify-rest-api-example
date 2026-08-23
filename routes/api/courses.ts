@@ -23,12 +23,10 @@ const handlers = defineHandlers({
   },
 
   async coursesCreate(request, reply) {
-    await request.jwtVerify();
     const validated = await CourseValidator.validateCreate(request.db, request.body);
-    const creatorId = request.user?.id;
     const values = {
       ...validated,
-      creatorId: creatorId,
+      creatorId: request.user.id,
     };
 
     const [course] = await request.db.insert(schemas.courses).values(values).returning();
@@ -36,7 +34,6 @@ const handlers = defineHandlers({
   },
 
   async coursesUpdate(request, reply) {
-    await request.jwtVerify();
     const validated = await CourseValidator.validateEdit(request.db, request.body);
     const [course] = await request.db
       .update(schemas.courses)
@@ -48,7 +45,6 @@ const handlers = defineHandlers({
   },
 
   async coursesDestroy(request, reply) {
-    await request.jwtVerify();
     const [course] = await request.db
       .delete(schemas.courses)
       .where(eq(schemas.courses.id, request.params.id))

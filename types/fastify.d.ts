@@ -19,7 +19,6 @@ declare module "fastify" {
   }
   interface FastifyInstance extends FastifyJwtNamespace<{ namespace: "security" }> {
     db: ReturnType<typeof drizzle<typeof schemas>>;
-    authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
   // type FastifyTypebox = FastifyInstance<
   //   RawServerDefault,

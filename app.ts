@@ -1,7 +1,7 @@
 import path from "node:path";
 import type { AutoloadPluginOptions } from "@fastify/autoload";
 import AutoLoad from "@fastify/autoload";
-import type { FastifyPluginAsync, FastifyServerOptions } from "fastify";
+import type { FastifyPluginAsync, FastifyRequest, FastifyServerOptions } from "fastify";
 import glue from "fastify-openapi-glue";
 import * as z from "zod";
 import serviceHandlers from "./routes/index.ts";
@@ -45,9 +45,18 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
     options: opts,
   });
 
+  // Авторизацию навешивает glue по `security` из спеки, сопоставляя имя
+  // обработчика с именем схемы (BearerAuth). Руками её писать нельзя: пока
+  // jwtVerify вызывался в каждом обработчике, во всех пяти операциях /users
+  // его забыли, и список, правка и удаление пользователей были открыты.
   fastify.register(glue, {
     // prefix: 'v1',
     serviceHandlers,
+    securityHandlers: {
+      BearerAuth: async (request: FastifyRequest) => {
+        await request.jwtVerify();
+      },
+    },
     specification: "./tsp-output/@typespec/openapi3/openapi.v1.json",
   });
 
