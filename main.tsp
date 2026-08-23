@@ -81,10 +81,18 @@ model User {
 model UserCreateDTO {
   fullName?: string;
   email: string;
+
+  @minLength(8)
+  @secret
+  password: string;
 }
 
 model UserEditDTO {
   fullName?: string;
+
+  @minLength(8)
+  @secret
+  password?: string;
 }
 
 model Course {
@@ -114,6 +122,8 @@ model CourseLesson {
 
 model AuthInfo {
   email: string;
+
+  @secret
   password: string;
 }
 
@@ -173,7 +183,7 @@ namespace tokens {
   op create(@body auth_info: AuthInfo): {
     @body token: TokenInfo;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError;
+  } | UnprocessableEntityError | UnauthorizedError;
 }
 
 @route("/courses")

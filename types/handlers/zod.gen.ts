@@ -100,10 +100,12 @@ export const zUser = z.object({
 export const zUserCreateDto = z.object({
   fullName: z.string().optional(),
   email: z.string(),
+  password: z.string().min(8),
 });
 
 export const zUserEditDto = z.object({
   fullName: z.string().optional(),
+  password: z.string().min(8).optional(),
 });
 
 export const zVersions = z.enum(["v1", "v2"]);

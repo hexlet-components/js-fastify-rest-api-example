@@ -1,4 +1,4 @@
-import type { FastifyReply } from "fastify";
+import { httpErrors } from "@fastify/sensible";
 import type { RouteHandlers } from "../types/handlers/fastify.gen.ts";
 
 export function getPagingOptions(page: number, perPage = 10) {
@@ -8,14 +8,17 @@ export function getPagingOptions(page: number, perPage = 10) {
   };
 }
 
+// Раньше здесь вызывался createError, который ошибку только создаёт. Из-за
+// этого 404 не наступал никогда: отсутствующая запись давала 200 с пустым
+// телом, а /tokens с неизвестным email — 500 при обращении к полю у undefined.
+// Хуже того, сигнатура asserts заставляла tsc ручаться за проверку, которой не
+// происходило.
 export function ensure<T>(
-  reply: FastifyReply,
   value: T | null | undefined,
   status: number = 404,
-  msg?: string,
+  msg = "Not Found",
 ): asserts value is NonNullable<T> {
-  const m = msg || "Not Found";
-  if (value == null) reply.server.httpErrors.createError(status, m);
+  if (value == null) throw httpErrors.createError(status, msg);
 }
 
 export function defineHandlers<T extends Partial<RouteHandlers>>(t: T) {

@@ -1,3 +1,4 @@
+import { STATUS_CODES } from "node:http";
 import path from "node:path";
 import type { AutoloadPluginOptions } from "@fastify/autoload";
 import AutoLoad from "@fastify/autoload";
@@ -12,7 +13,11 @@ export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPlugin
 const options: AppOptions = {};
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
-  fastify.setErrorHandler((error, _request, reply) => {
+  // Все модели ошибок в контракте наследуют ProblemDetails (RFC 9457), поэтому
+  // и отдавать их надо в этом виде. Раньше так уходил только ZodError, а
+  // остальное — дефолтным форматом fastify: пока 404 не наступал никогда, это
+  // было незаметно.
+  fastify.setErrorHandler((error: Error & { statusCode?: number }, _request, reply) => {
     if (error instanceof z.ZodError) {
       const errors = error.issues.map((issue) => ({
         message: issue.message,
@@ -26,9 +31,20 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
         errors,
       };
       reply.type("application/problem+json").code(422).send(errorDetail);
-    } else {
-      reply.send(error);
+      return;
     }
+
+    const status = typeof error.statusCode === "number" ? error.statusCode : 500;
+    reply
+      .type("application/problem+json")
+      .code(status)
+      .send({
+        status,
+        title: STATUS_CODES[status] ?? "Error",
+        // Текст ошибки 5xx наружу не уходит: он может содержать что угодно,
+        // вплоть до фрагмента запроса к базе.
+        detail: status >= 500 ? "Internal Server Error" : error.message,
+      });
   });
 
   fastify.addContentTypeParser(

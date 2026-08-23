@@ -10,7 +10,7 @@ export default fp(async (fastify) => {
   const sqlite = new Database(":memory:");
   const db = drizzle(sqlite, { schema: schemas });
   migrate(db, { migrationsFolder: "drizzle" });
-  seed(db);
+  await seed(db);
 
   if (!fastify.hasRequestDecorator("db")) {
     fastify.decorate("db", db);

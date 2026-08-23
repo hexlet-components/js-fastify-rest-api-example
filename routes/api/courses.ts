@@ -18,7 +18,7 @@ const handlers = defineHandlers({
     const course = await request.db.query.courses.findFirst({
       where: eq(schemas.courses.id, request.params.id),
     });
-    ensure(reply, course, 404);
+    ensure(course, 404);
     return reply.code(200).send(course);
   },
 
@@ -40,7 +40,7 @@ const handlers = defineHandlers({
       .set(validated)
       .where(eq(schemas.courses.id, request.params.id))
       .returning();
-    ensure(reply, course, 404);
+    ensure(course, 404);
     return reply.code(200).send(course);
   },
 
@@ -49,7 +49,7 @@ const handlers = defineHandlers({
       .delete(schemas.courses)
       .where(eq(schemas.courses.id, request.params.id))
       .returning();
-    ensure(reply, course, 404);
+    ensure(course, 404);
     return reply.code(204).send();
   },
 });

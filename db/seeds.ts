@@ -1,16 +1,20 @@
-import { buildCourse, buildCourseLesson, buildUser } from "../lib/data.ts";
+import { buildCourse, buildCourseLesson, buildUserRecord } from "../lib/data.ts";
 import type { DrizzleDB } from "../types/index.ts";
 import * as schemas from "./schema.ts";
-/**
- * @param {import("drizzle-orm/better-sqlite3").BetterSQLite3Database<typeof schemas>} db
- */
+
 export default async (db: DrizzleDB) => {
-  const [_user1] = await db.insert(schemas.users).values(buildUser()).returning();
-  const [user2] = await db.insert(schemas.users).values(buildUser()).returning();
+  const [_user1] = await db
+    .insert(schemas.users)
+    .values(await buildUserRecord())
+    .returning();
+  const [user2] = await db
+    .insert(schemas.users)
+    .values(await buildUserRecord())
+    .returning();
   const [_user3] = await db
     .insert(schemas.users)
     .values(
-      buildUser({
+      await buildUserRecord({
         email: "support@hexlet.io",
         fullName: "Тото Поддерживающий",
       }),

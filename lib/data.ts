@@ -1,13 +1,27 @@
 import { faker } from "@faker-js/faker";
 import type { Course, CourseLesson, User } from "../types/index.js";
+import { hashPassword } from "./password.ts";
 
-export function buildUser(params: Partial<User> = {}) {
+// Пароль у всех тестовых пользователей один: тестам нужно уметь логиниться под
+// любым из них, а перебирать значения незачем.
+export const DEFAULT_PASSWORD = "correct-horse-battery-staple";
+
+// Форма запроса к API: с открытым паролем.
+export function buildUser(params: Partial<User> & { password?: string } = {}) {
   const user = {
     fullName: faker.person.fullName(),
     email: faker.internet.email().toLowerCase(),
+    password: DEFAULT_PASSWORD,
   };
 
   return Object.assign({}, user, params);
+}
+
+// Форма строки в базе: с хешем вместо пароля. Нужна сидам и тестам, которые
+// заводят пользователя напрямую, минуя эндпоинт.
+export async function buildUserRecord(params: Partial<User> = {}) {
+  const { password, ...rest } = buildUser(params);
+  return Object.assign({}, rest, { passwordDigest: await hashPassword(password) }, params);
 }
 
 export function buildCourse(params: Partial<Course> = {}) {

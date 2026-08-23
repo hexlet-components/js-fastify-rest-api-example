@@ -22,7 +22,7 @@ const handlers = defineHandlers({
         eq(schemas.courseLessons.id, request.params.id),
       ),
     });
-    ensure(reply, lesson, 404);
+    ensure(lesson, 404);
     return reply.code(200).send(lesson);
   },
 

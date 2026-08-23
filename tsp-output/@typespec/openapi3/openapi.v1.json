@@ -405,6 +405,16 @@
               }
             }
           },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Client error",
             "content": {
@@ -658,7 +668,8 @@
             "type": "string"
           },
           "password": {
-            "type": "string"
+            "type": "string",
+            "format": "password"
           }
         }
       },
@@ -910,7 +921,8 @@
       "UserCreateDTO": {
         "type": "object",
         "required": [
-          "email"
+          "email",
+          "password"
         ],
         "properties": {
           "fullName": {
@@ -918,6 +930,11 @@
           },
           "email": {
             "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "format": "password"
           }
         }
       },
@@ -926,6 +943,11 @@
         "properties": {
           "fullName": {
             "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "format": "password"
           }
         }
       },

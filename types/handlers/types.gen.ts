@@ -102,10 +102,12 @@ export type User = {
 export type UserCreateDto = {
   fullName?: string;
   email: string;
+  password: string;
 };
 
 export type UserEditDto = {
   fullName?: string;
+  password?: string;
 };
 
 export type Versions = "v1" | "v2";
@@ -341,6 +343,10 @@ export type TokensCreateData = {
 };
 
 export type TokensCreateErrors = {
+  /**
+   * Access is unauthorized.
+   */
+  401: UnauthorizedError;
   /**
    * Client error
    */
