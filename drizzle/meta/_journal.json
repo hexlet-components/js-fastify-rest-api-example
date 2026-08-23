@@ -15,6 +15,13 @@
       "when": 1787444426840,
       "tag": "0001_friendly_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787444748820,
+      "tag": "0002_handy_paladin",
+      "breakpoints": true
     }
   ]
 }
