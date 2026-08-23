@@ -60,3 +60,6 @@ profile*
 
 # кеш schemathesis (make contract-test)
 .schemathesis
+
+# базовая спека для oasdiff в CI
+.oasdiff

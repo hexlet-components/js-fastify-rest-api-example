@@ -20,15 +20,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Файл кладётся в рабочую копию, а не в /tmp: oasdiff запускается
+      # docker-действием, и внутрь контейнера монтируется только workspace —
+      # из /tmp он базовую спеку не увидит.
       - name: Extract the base version of the spec
         run: |
+          mkdir -p .oasdiff
           git show "origin/${{ github.base_ref }}:tsp-output/@typespec/openapi3/openapi.v1.json" \
-            > /tmp/openapi.base.json 2>/dev/null \
-            || cp tsp-output/@typespec/openapi3/openapi.v1.json /tmp/openapi.base.json
+            > .oasdiff/base.json \
+            || cp tsp-output/@typespec/openapi3/openapi.v1.json .oasdiff/base.json
+          test -s .oasdiff/base.json
 
       - name: Report breaking changes
         continue-on-error: true
         uses: oasdiff/oasdiff-action/breaking@main
         with:
-          base: /tmp/openapi.base.json
+          base: .oasdiff/base.json
           revision: tsp-output/@typespec/openapi3/openapi.v1.json
