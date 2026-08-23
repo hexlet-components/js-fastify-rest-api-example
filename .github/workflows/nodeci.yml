@@ -1,7 +1,5 @@
 name: Node CI
 
-# На каждое событие ровно один workflow: здесь нет release-please, поэтому
-# main проверяет Node CI.
 on:
   push:
     branches:
@@ -9,6 +7,12 @@ on:
   pull_request:
     branches:
       - main
+
+# Пуш в ветку с открытым PR запускает сборку дважды. Прошлый прогон отменяется,
+# кроме main: там история сборок нужна целиком.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
@@ -45,5 +49,9 @@ jobs:
       # руками.
       - name: Check generated code
         run: make generate-check
+      # Схема без миграции — молчаливая поломка: код ждёт колонку, которой в
+      # базе не появится.
+      - name: Check migrations
+        run: make migration-check
       - name: Run tests
-        run: make test
+        run: make test-coverage

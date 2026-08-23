@@ -1,14 +1,20 @@
 test:
 	pnpm test
 
+test-coverage:
+	pnpm exec vitest run --coverage
+
 dev:
 	pnpm run dev
 
 check-types:
 	pnpm exec tsc
 
+# ncu, а не npx: пакет стоит в devDependencies, и npx при его отсутствии молча
+# тянул бы из сети другую версию. Обычно обновления приносит dependabot — цель
+# нужна, когда хочется обновиться сразу и локально.
 deps-update:
-	npx ncu -u
+	pnpm exec ncu -u
 
 # Таблица маршрутов целиком: их регистрирует glue по спеке, отдельного файла
 # с маршрутами нет — печатать нужно приложение.
@@ -17,6 +23,22 @@ routes:
 
 migration-generate:
 	pnpm exec drizzle-kit generate
+
+# Схема без миграции — молчаливая поломка: код ждёт колонку, которой в базе не
+# появится. Цель ловит это, перегенерировав и проверив, что ничего нового не
+# возникло. В generate-check миграции не входят намеренно: там речь про
+# сгенерированное из спеки, а миграцию автор создаёт осознанно.
+#
+# check вызывается флагами, а не через конфиг: читая drizzle.config.ts, он
+# принимает dialect за параметр AWS Data API и падает (drizzle-kit 0.31).
+migration-check:
+	pnpm exec drizzle-kit check --dialect sqlite --out ./drizzle
+	pnpm exec drizzle-kit generate
+	@test -z "$$(git status --porcelain drizzle)" || { \
+		echo "Схема изменилась без миграции — запустите make migration-generate:"; \
+		git status --porcelain drizzle; \
+		exit 1; \
+	}
 
 lint:
 	pnpm --silent run lint
@@ -54,4 +76,4 @@ install:
 
 .PHONY: install test dev check-types deps-update routes migration-generate \
 	lint lint-fix generate-openapi generate-openapi-ts-types generate-types \
-	generate-check mock
+	generate-check migration-check mock test-coverage

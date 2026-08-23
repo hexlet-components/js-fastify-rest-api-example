@@ -1,0 +1,21 @@
+name: Release Please
+
+# Вторая половина того, что уже настроено: pr-title.yml требует conventional
+# commit в заголовке PR именно затем, чтобы по нему определялся разряд версии.
+# Без этого workflow заголовки проверялись, но ничего не выпускали.
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          release-type: node

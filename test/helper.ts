@@ -1,51 +1,25 @@
 import { onTestFinished } from "vitest";
 import assert from "node:assert";
-import helper from "fastify-cli/helper.js";
-import path from "path";
-import * as schemas from "../db/schema.ts";
 import { eq } from "drizzle-orm";
-import type { FastifyInstance } from "fastify";
+import Fastify, { type FastifyInstance } from "fastify";
+import fp from "fastify-plugin";
+import app from "../app.ts";
+import * as schemas from "../db/schema.ts";
 
-const AppPath = path.join(import.meta.dirname, "..", "app.ts");
-
-// Fill in this config with all the configurations
-// needed for testing the application
-function config() {
-  return {
-    skipOverride: true,
-  };
-}
-
-function serverConfig() {
-  return {
-    logger: {
-      level: "error",
-      transport: {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-        },
-      },
-    },
-  };
-}
-
-// Тип возвращаемого значения проставлен руками: helper из fastify-cli — это
-// нетипизированный JS, и без аннотации весь app в тестах становится any, а
-// вместе с ним и всё, что из него читают.
+// Приложение собирается напрямую, а не через helper из fastify-cli. Тот грузит
+// app.ts сам, в обход трансформации vite: из-за этого весь app в тестах был
+// any, а покрытие показывало по обработчикам единицы процентов при живых
+// тестах на них.
 async function build(): Promise<FastifyInstance> {
-  // you can set all the options supported by the fastify CLI command
-  const argv = [AppPath];
+  const fastify = Fastify({ logger: { level: "error" } });
+  // fp снимает инкапсуляцию, и декораторы приложения (db, jwt) видны снаружи.
+  // В бою так не нужно — это только чтобы тесты могли дотянуться до базы.
+  fastify.register(fp(app));
+  await fastify.ready();
 
-  // fastify-plugin ensures that all decorators
-  // are exposed for testing purposes, this is
-  // different from the production setup
-  const app = await helper.build(argv, config(), serverConfig());
+  onTestFinished(() => fastify.close());
 
-  // tear down our app after we are done
-  onTestFinished(() => app.close());
-
-  return app;
+  return fastify;
 }
 
 async function getAuthHeader(app: FastifyInstance, userId: number | null = null) {
@@ -58,4 +32,4 @@ async function getAuthHeader(app: FastifyInstance, userId: number | null = null)
   };
 }
 
-export { config, build, getAuthHeader };
+export { build, getAuthHeader };
