@@ -17,11 +17,22 @@ export function buildUser(params: Partial<User> & { password?: string } = {}) {
   return Object.assign({}, user, params);
 }
 
+// scrypt считается десятки миллисекунд — это его работа. Но сиды прогоняются
+// на каждый build() в тестах, и пароль там всегда один, поэтому хеш дефолтного
+// считается один раз на процесс.
+let defaultDigest: Promise<string> | undefined;
+
+function digestOf(password: string) {
+  if (password !== DEFAULT_PASSWORD) return hashPassword(password);
+  defaultDigest ??= hashPassword(DEFAULT_PASSWORD);
+  return defaultDigest;
+}
+
 // Форма строки в базе: с хешем вместо пароля. Нужна сидам и тестам, которые
 // заводят пользователя напрямую, минуя эндпоинт.
 export async function buildUserRecord(params: Partial<User> = {}) {
   const { password, ...rest } = buildUser(params);
-  return Object.assign({}, rest, { passwordDigest: await hashPassword(password) }, params);
+  return Object.assign({}, rest, { passwordDigest: await digestOf(password) }, params);
 }
 
 export function buildCourse(params: Partial<Course> = {}) {
