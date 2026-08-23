@@ -21,22 +21,37 @@ REST API на [Fastify](https://fastify.dev/), собранный «по-взр�
 - **База через [Drizzle](https://orm.drizzle.team/)**: схема в `db/schema.ts`,
   миграции генерируются по ней.
 - **Валидация входа** отдельным слоем в `validators/`, а не внутри обработчика.
+- **Авторизация тоже из спеки.** `@useAuth` в контракте применяет
+  `fastify-openapi-glue` через securityHandlers, а не `jwtVerify()` в каждом
+  обработчике — забыть его негде.
+- **Спека проверяется снаружи.** `make contract-test` натравливает
+  [schemathesis](https://schemathesis.readthedocs.io/) на поднятое приложение:
+  тот генерирует запросы из OpenAPI и ловит то, что не видят ни tsc, ни
+  валидаторы — незадокументированные статусы, 5xx на краевых входах и
+  неприменённую авторизацию.
 
 ## Запуск
 
 ```bash
 make install
+cp .env.example .env    # и подставить JWT_SECRET
 make dev
 make test
 ```
+
+Документация — на http://localhost:3000/docs, сама спека — на `/openapi.json`.
 
 Полезное:
 
 ```bash
 make routes             # список маршрутов
 make migration-generate # миграция по изменённой схеме
+make migration-check    # схема не менялась без миграции
 make generate-types     # OpenAPI и типы из TypeSpec
 make generate-check     # проверить, что сгенерированное закоммичено
+make lint-openapi       # линт контракта
+make contract-test      # schemathesis по спеке (нужен uv)
+make test-coverage      # тесты с порогами покрытия
 make mock               # поднять мок-сервер по OpenAPI
 ```
 

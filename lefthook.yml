@@ -5,8 +5,10 @@
 pre-commit:
   parallel: true
   jobs:
+    # Только ts/js: oxfmt другого не форматирует и падает, если в наборе не
+    # осталось подходящих файлов.
     - name: format
-      glob: "*.{ts,js,json,md,yml,yaml}"
+      glob: "*.{ts,js}"
       run: pnpm exec oxfmt --ignore-path=.oxfmtignore {staged_files}
       # Отформатированное возвращается в индекс, иначе коммит уедет в старом
       # виде и format:check в CI всё равно упадёт.
