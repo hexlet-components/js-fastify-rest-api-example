@@ -11,12 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "module": "NodeNext",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "outDir": "dist",
-    "rootDir": "."
+    "noUnusedParameters": false
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules"]
 }

@@ -10,8 +10,10 @@ check-types:
 deps-update:
 	npx ncu -u
 
+# Таблица маршрутов целиком: их регистрирует glue по спеке, отдельного файла
+# с маршрутами нет — печатать нужно приложение.
 routes:
-	pnpm exec fastify print-routes routes/api/users.js
+	pnpm exec fastify print-routes app.ts
 
 migration-generate:
 	pnpm exec drizzle-kit generate
@@ -47,9 +49,9 @@ generate-check: generate-types
 mock:
 	pnpm exec prism mock ./tsp-output/@typespec/openapi3/openapi.v1.json
 
-tsp-build:
-
-.PHONY: test routes
-
 install:
 	pnpm install
+
+.PHONY: install test dev check-types deps-update routes migration-generate \
+	lint lint-fix generate-openapi generate-openapi-ts-types generate-types \
+	generate-check mock

@@ -1,5 +1,4 @@
 import type { FastifyReply } from "fastify";
-import openapiConst from "../tsp-output/@typespec/openapi3/openapi.v2.json" with { type: "json" };
 import type { RouteHandlers } from "../types/handlers/fastify.gen.ts";
 
 export function getPagingOptions(page: number, perPage = 10) {
@@ -7,10 +6,6 @@ export function getPagingOptions(page: number, perPage = 10) {
     limit: perPage,
     offset: (page - 1) * perPage,
   };
-}
-
-export function openapi() {
-  return openapiConst;
 }
 
 export function ensure<T>(

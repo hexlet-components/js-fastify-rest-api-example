@@ -2,39 +2,75 @@
 
 ## Project Structure & Module Organization
 
-- `app.js`: Fastify entry; autoloads `plugins/` and `routes/`.
-- `routes/`: HTTP handlers.
-- `plugins/`: App plugins (JWT auth, DB, sensible errors, response validation, route glue).
-- `db/`: Drizzle ORM schema and seeds; `drizzle/` holds generated migrations.
-- `lib/`: Utilities and test data builders.
-- `test/`: Node tests; helpers in `test/helper.js`, route specs in `test/routes/*.test.js`.
-- `types/`: ts types
-- `main.tsp`, `tsp-output/`: TypeSpec and generated OpenAPI/handler typings.
+- `app.ts`: Fastify entry. Autoloads `plugins/`, then registers
+  `fastify-openapi-glue` with the generated OpenAPI spec and the handler map
+  from `routes/index.ts`. Routes are **not** autoloaded — the route table comes
+  from the spec, so a route exists only if it is described in `main.tsp`.
+- `main.tsp`, `tsp-output/`: TypeSpec contract (source of truth) and the OpenAPI
+  it emits. Versions `v1` and `v2` are declared; code and codegen use `v1`.
+- `routes/api/`: handler modules grouped by resource (`users.ts`, `courses.ts`,
+  `courses/lessons.ts`, `tokens.ts`), each wrapped in `defineHandlers`.
+  `routes/index.ts` merges them into `RouteHandlers` — the full generated type,
+  not `Partial`, so a missing handler is a compile error.
+- `plugins/`: JWT auth, Drizzle (in-memory SQLite, migrated and seeded on boot),
+  response validation, `@fastify/sensible`.
+- `db/`: Drizzle schema and seeds; generated migrations live in `drizzle/`.
+- `validators/`, `rules/`: business validation (zod, built on the generated
+  schemas), kept out of handlers.
+- `serializers/`, `policies/`, `lib/`: response shaping, authorization,
+  shared helpers.
+- `types/`: `fastify.d.ts` (hand-written decorator typings) and
+  `types/handlers/*.gen.ts` — **generated, never edit by hand**.
+- `test/`: Vitest specs in `test/routes/`, mirroring `routes/`; server bootstrap
+  in `test/helper.ts`.
 
 ## Build, Test, and Development Commands
-- `npm run dev`: Start Fastify with watch on http://localhost:3000.
-- `npm start`: Start in production mode.
-- `npm test` or `make test`: Run Node tests (`node --test`).
-- `make lint` / `make lint-fix`: Lint and autofix.
-- `make check-types`: Type-check with `tsc` (JS + d.ts).
-- `make generate-types`: Compile TypeSpec and generate Fastify handler types.
-- `make migration-generate`: Generate Drizzle migrations.
-- `make mock`: Serve mocked API from generated OpenAPI.
+
+Package manager is pnpm (`packageManager` in `package.json`); Node >= 26.
+
+- `make install`: install dependencies.
+- `make dev`: Fastify with watch on http://localhost:3000.
+- `make test`: Vitest run.
+- `make lint`: oxlint + `tsc` + format check. `make lint-fix` autofixes.
+- `make check-types`: `tsc` only (same check `make lint` runs).
+- `make routes`: print the route table registered from the spec.
+- `make generate-types`: TypeSpec → OpenAPI → handler types and zod schemas,
+  then format. `make generate-check` (CI) fails if the result is not committed.
+- `make migration-generate`: Drizzle migration from the changed schema.
+- `make mock`: Prism mock server from the generated OpenAPI.
 
 ## Coding Style & Naming Conventions
-- **Modules**: ESM only (`type: module`). Prefer named exports; keep JSDoc types consistent with `types/`.
-- **Formatting**: 2-space indent, no semicolons; follow ESLint + `@stylistic` rules. Run `make lint` before committing.
-- **Files**: Group endpoints by resource in `routes/api/` (e.g., `routes/api/books.js`). Co-locate validators and serializers by domain when present.
+
+- **TypeScript only**, ESM (`type: module`). Node executes `.ts` directly — no
+  build step, no bundler.
+- **Local imports carry the explicit `.ts` extension** (`allowImportingTsExtensions`
+  with `NodeNext`): `import users from "./api/users.ts"`.
+- `tsconfig.json` sets `noEmit: true` — `tsc` type-checks, it never emits.
+- **Formatting** by oxfmt: 2-space indent, semicolons, double quotes. Linting by
+  oxlint (`.oxlintrc.json`). Run `make lint` before committing.
+- Changing the API means editing `main.tsp` first, then `make generate-types`,
+  then the handler. Never patch `tsp-output/` or `types/handlers/` directly.
 
 ## Testing Guidelines
-- **Framework**: Node built-in `node:test` with `app.inject()`; see `test/helper.js` for server bootstrap.
-- **Naming**: Place specs under `test/routes/` as `*.test.js` (e.g., `test/routes/users.test.js`).
-- **Scope**: Add success tests for each new/changed route. No coverage gate enforced.
+
+- **Framework**: Vitest with `app.inject()`; see `test/helper.ts`.
+- **Naming**: specs go to `test/routes/**/*.test.ts`. `vitest.config.ts` includes
+  only `*.test.ts` — a `.test.js` file is silently skipped.
+- **Scope**: add success tests for each new/changed route. No coverage gate.
 
 ## Commit & Pull Request Guidelines
-- **Commits**: Use clear, imperative messages (optionally Conventional Commits). Reference issues when applicable.
-- **PRs**: Provide purpose, summary, linked issues, test plan, and example requests/responses (curl or HTTPie). Keep diffs focused.
+
+- **Commits**: Conventional Commits, imperative mood (this repo writes them in
+  Russian). Reference issues when applicable.
+- **PRs**: the PR title must be a Conventional Commit — it becomes the squash
+  commit message and CI checks it. Provide purpose, summary, test plan, and
+  example requests/responses. Keep diffs focused.
 
 ## Security & Configuration Tips
-- **Secrets**: Move JWT secret to env (e.g., `JWT_SECRET`) rather than hardcoding; use `.env` locally and never commit secrets.
-- **DB**: Current DB is in-memory SQLite (`plugins/drizzle.js`). Switch to file/real DB for persistence before production.
+
+- **Secrets**: the JWT secret is hardcoded in `plugins/jwt.ts` for teaching
+  purposes. Move it to an env var (`JWT_SECRET`) before any real deployment;
+  use `.env` locally and never commit it.
+- **DB**: SQLite in memory (`plugins/drizzle.ts`) — the database is recreated,
+  migrated, and seeded on every boot. Switch to a file or a real server for
+  persistence.

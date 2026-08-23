@@ -1,9 +1,12 @@
 {
   "type": "module",
   "name": "js-fastify-rest-api-example",
-  "description": "This project was bootstrapped with Fastify-CLI.",
+  "description": "REST API на Fastify: контракт на TypeSpec, типы и валидация из OpenAPI, Drizzle ORM.",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "app.ts",
+  "engines": {
+    "node": ">=26"
+  },
   "directories": {
     "test": "test"
   },
