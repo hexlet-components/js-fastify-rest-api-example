@@ -30,7 +30,10 @@ function serverConfig() {
   };
 }
 
-async function build() {
+// Тип возвращаемого значения проставлен руками: helper из fastify-cli — это
+// нетипизированный JS, и без аннотации весь app в тестах становится any, а
+// вместе с ним и всё, что из него читают.
+async function build(): Promise<FastifyInstance> {
   // you can set all the options supported by the fastify CLI command
   const argv = [AppPath];
 

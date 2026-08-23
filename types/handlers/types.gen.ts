@@ -195,6 +195,14 @@ export type CoursesLessonsCreateErrors = {
    */
   401: UnauthorizedError;
   /**
+   * Access is forbidden.
+   */
+  403: ForbiddenError;
+  /**
+   * The server cannot find the requested resource.
+   */
+  404: NotFoundError;
+  /**
    * Client error
    */
   422: UnprocessableEntityError;
@@ -257,6 +265,10 @@ export type CoursesDestroyErrors = {
    */
   401: UnauthorizedError;
   /**
+   * Access is forbidden.
+   */
+  403: ForbiddenError;
+  /**
    * The server cannot find the requested resource.
    */
   404: NotFoundError;
@@ -314,6 +326,10 @@ export type CoursesUpdateErrors = {
    * Access is unauthorized.
    */
   401: UnauthorizedError;
+  /**
+   * Access is forbidden.
+   */
+  403: ForbiddenError;
   /**
    * The server cannot find the requested resource.
    */

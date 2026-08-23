@@ -219,14 +219,15 @@ namespace courses {
       }
     | NotFoundError
     | UnprocessableEntityError
-    | UnauthorizedError;
+    | UnauthorizedError
+    | ForbiddenError;
 
   @delete
   @useAuth(BearerAuth)
   @operationId("coursesDestroy")
   op destroy(@path id: numeric): {
     @statusCode statusCode: 204;
-  } | NotFoundError | UnauthorizedError;
+  } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
 @route("/courses/{courseId}/lessons")
@@ -251,6 +252,6 @@ namespace courses_lessons {
   op create(@path courseId: numeric, @body course: CourseLessonCreateDTO): {
     @body lesson: CourseLesson;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError | UnauthorizedError;
+  } | UnprocessableEntityError | UnauthorizedError | ForbiddenError | NotFoundError;
 }
 

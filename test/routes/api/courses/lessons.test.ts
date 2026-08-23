@@ -34,7 +34,7 @@ test("post lessons", async () => {
 
   const body = buildCourseLesson();
 
-  const authHeader = await getAuthHeader(app);
+  const authHeader = await getAuthHeader(app, course.creatorId);
   const res = await app.inject({
     method: "post",
     url: `/courses/${course.id}/lessons`,
