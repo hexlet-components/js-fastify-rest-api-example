@@ -57,3 +57,6 @@ profile*
 *clinic*
 *flamegraph*
 .env
+
+# кеш schemathesis (make contract-test)
+.schemathesis

@@ -1,0 +1,43 @@
+name: Contract Tests
+
+# Отдельным workflow, а не шагом в Node CI: инструмент внешний по отношению к
+# проекту (python-овый schemathesis через uv), и выкинуть его должно быть
+# просто — удалением одного файла и цели contract-test в Makefile.
+#
+# Проверяет то, чего не видят ни tsc, ни валидаторы fastify: применена ли
+# авторизация, не отдаёт ли API статусы, которых нет в контракте, и не падает
+# ли он в 5xx на краевых входах.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  schemathesis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26.x
+          cache: pnpm
+
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Install
+        run: make install
+
+      - name: Run contract tests
+        run: make contract-test

@@ -38,6 +38,23 @@ model ProblemDetails {
 }
 
 @error
+model BadRequestError {
+  @statusCode _: 400;
+  ...ProblemDetails;
+}
+
+@error
+model TooManyRequestsError {
+  @statusCode _: 429;
+  ...ProblemDetails;
+}
+
+// Эти два исхода возможны почти везде: 400 отдаёт валидация запроса по этой же
+// спеке, 429 — ограничитель частоты. Раньше их не было в контракте вовсе, и
+// клиент по спеке не мог их предусмотреть.
+alias CommonErrors = BadRequestError | TooManyRequestsError;
+
+@error
 model NotFoundError {
   @statusCode _: 404;
   ...ProblemDetails;
@@ -86,7 +103,12 @@ model User {
 }
 
 model UserCreateDTO {
+  // Границы те же, что у User: иначе запрос принимает имя, которое валидатор
+  // ответа потом забракует, и создание падает в 500.
+  @minLength(2)
+  @maxLength(100)
   fullName?: string;
+
   email: string;
 
   @minLength(8)
@@ -95,6 +117,8 @@ model UserCreateDTO {
 }
 
 model UserEditDTO {
+  @minLength(2)
+  @maxLength(100)
   fullName?: string;
 
   @minLength(8)
@@ -149,19 +173,19 @@ namespace users {
   @operationId("usersIndex")
   @get
   @useAuth(BearerAuth)
-  op index(@query page?: numeric = 1): {
+  op index(@query @minValue(1) page?: int32 = 1): {
     @body users: {
       data: User[];
     };
-  } | UnauthorizedError;
+  } | UnauthorizedError | CommonErrors;
 
   @summary("Пользователь по идентификатору")
   @get
   @useAuth(BearerAuth)
   @operationId("usersShow")
-  op show(@path id: numeric): {
+  op show(@path @minValue(1) id: int32): {
     @body _: User;
-  } | NotFoundError | UnauthorizedError;
+  } | NotFoundError | UnauthorizedError | CommonErrors;
 
   @summary("Регистрация пользователя")
   @post
@@ -169,23 +193,23 @@ namespace users {
   op create(@body _: UserCreateDTO): {
     @body _: User;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError;
+  } | UnprocessableEntityError | CommonErrors;
 
   @summary("Изменение пользователя")
   @put
   @useAuth(BearerAuth)
   @operationId("usersUpdate")
-  op update(@path id: numeric, @body user: UserEditDTO): {
+  op update(@path @minValue(1) id: int32, @body user: UserEditDTO): {
     @body user: User;
-  } | NotFoundError | UnprocessableEntityError | UnauthorizedError;
+  } | NotFoundError | UnprocessableEntityError | UnauthorizedError | CommonErrors;
 
   @summary("Удаление пользователя")
   @delete
   @useAuth(BearerAuth)
   @operationId("usersDestroy")
-  op destroy(@path id: numeric): {
+  op destroy(@path @minValue(1) id: int32): {
     @statusCode statusCode: 204;
-  } | NotFoundError | UnauthorizedError;
+  } | NotFoundError | UnauthorizedError | CommonErrors;
 }
 
 @route("/tokens")
@@ -196,7 +220,7 @@ namespace tokens {
   op create(@body auth_info: AuthInfo): {
     @body token: TokenInfo;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError | UnauthorizedError;
+  } | UnprocessableEntityError | UnauthorizedError | CommonErrors;
 }
 
 @route("/courses")
@@ -204,18 +228,18 @@ namespace courses {
   @summary("Список курсов")
   @get
   @operationId("coursesIndex")
-  op index(@query page?: numeric = 1): {
+  op index(@query @minValue(1) page?: int32 = 1): {
     @body courses: {
       data: Course[];
     };
-  };
+  } | CommonErrors;
 
   @summary("Курс по идентификатору")
   @get
   @operationId("coursesShow")
-  op show(@path id: numeric): {
+  op show(@path @minValue(1) id: int32): {
     @body course: Course;
-  } | NotFoundError;
+  } | NotFoundError | CommonErrors;
 
   @summary("Создание курса")
   @post
@@ -224,28 +248,29 @@ namespace courses {
   op create(@body course: CourseCreateDTO): {
     @body course: Course;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError | UnauthorizedError;
+  } | UnprocessableEntityError | UnauthorizedError | CommonErrors;
 
   @summary("Изменение курса")
   @put
   @useAuth(BearerAuth)
   @operationId("coursesUpdate")
-  op update(@path id: numeric, @body course: CourseEditDTO):
+  op update(@path @minValue(1) id: int32, @body course: CourseEditDTO):
     | {
         @body course: Course;
       }
     | NotFoundError
     | UnprocessableEntityError
     | UnauthorizedError
-    | ForbiddenError;
+    | ForbiddenError
+    | CommonErrors;
 
   @summary("Удаление курса")
   @delete
   @useAuth(BearerAuth)
   @operationId("coursesDestroy")
-  op destroy(@path id: numeric): {
+  op destroy(@path @minValue(1) id: int32): {
     @statusCode statusCode: 204;
-  } | NotFoundError | UnauthorizedError | ForbiddenError;
+  } | NotFoundError | UnauthorizedError | ForbiddenError | CommonErrors;
 }
 
 @route("/courses/{courseId}/lessons")
@@ -253,26 +278,26 @@ namespace courses_lessons {
   @summary("Список уроков курса")
   @get
   @operationId("coursesLessonsIndex")
-  op index(@path courseId: numeric, @query page?: numeric = 1): {
+  op index(@path @minValue(1) courseId: int32, @query @minValue(1) page?: int32 = 1): {
     @body lessons: {
       data: CourseLesson[];
     };
-  };
+  } | CommonErrors;
 
   @summary("Урок курса")
   @get
   @operationId("coursesLessonsShow")
-  op show(@path courseId: numeric, @path id: numeric): {
+  op show(@path @minValue(1) courseId: int32, @path @minValue(1) id: int32): {
     @body lessons: CourseLesson;
-  } | NotFoundError;
+  } | NotFoundError | CommonErrors;
 
   @summary("Добавление урока в курс")
   @post
   @useAuth(BearerAuth)
   @operationId("coursesLessonsCreate")
-  op create(@path courseId: numeric, @body course: CourseLessonCreateDTO): {
+  op create(@path @minValue(1) courseId: int32, @body course: CourseLessonCreateDTO): {
     @body lesson: CourseLesson;
     @statusCode statusCode: 201;
-  } | UnprocessableEntityError | UnauthorizedError | ForbiddenError | NotFoundError;
+  } | UnprocessableEntityError | UnauthorizedError | ForbiddenError | NotFoundError | CommonErrors;
 }
 

@@ -39,16 +39,30 @@ const handlers = defineHandlers({
   },
 
   async usersUpdate(request, reply) {
+    // Запись читается до правки: так 404 наступает раньше любой работы, и есть
+    // что вернуть, если менять нечего.
+    const existing = await request.db.query.users.findFirst({
+      columns: publicUserColumns,
+      where: eq(schemas.users.id, request.params.id),
+    });
+    ensure(existing, 404);
+
     const { password, ...validated } = await UserValidator.validateEdit(request.db, request.body);
     const values = password
       ? { ...validated, passwordDigest: await hashPassword(password) }
       : validated;
+
+    // Все поля UserEditDTO необязательные, поэтому тело может оказаться
+    // пустым. drizzle на пустом set бросает «No values to set» — это был 500.
+    if (Object.keys(values).length === 0) {
+      return reply.code(200).send(existing);
+    }
+
     const [user] = await request.db
       .update(schemas.users)
       .set(values)
       .where(eq(schemas.users.id, request.params.id))
       .returning(publicUserFields);
-    ensure(user, 404);
     return reply.code(200).send(user);
   },
 

@@ -9,6 +9,14 @@ export type AuthInfo = {
   password: string;
 };
 
+export type BadRequestError = {
+  type?: string;
+  title?: string;
+  status?: number;
+  detail?: string;
+  instance?: string;
+};
+
 export type Course = {
   id: number;
   name: string;
@@ -72,6 +80,14 @@ export type TokenInfo = {
   token: string;
 };
 
+export type TooManyRequestsError = {
+  type?: string;
+  title?: string;
+  status?: number;
+  detail?: string;
+  instance?: string;
+};
+
 export type UnauthorizedError = {
   type?: string;
   title?: string;
@@ -121,6 +137,19 @@ export type CoursesIndexData = {
   url: "/courses";
 };
 
+export type CoursesIndexErrors = {
+  /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
+};
+
+export type CoursesIndexError = CoursesIndexErrors[keyof CoursesIndexErrors];
+
 export type CoursesIndexResponses = {
   /**
    * The request has succeeded.
@@ -141,6 +170,10 @@ export type CoursesCreateData = {
 
 export type CoursesCreateErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -148,6 +181,10 @@ export type CoursesCreateErrors = {
    * Client error
    */
   422: UnprocessableEntityError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type CoursesCreateError = CoursesCreateErrors[keyof CoursesCreateErrors];
@@ -172,6 +209,19 @@ export type CoursesLessonsIndexData = {
   url: "/courses/{courseId}/lessons";
 };
 
+export type CoursesLessonsIndexErrors = {
+  /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
+};
+
+export type CoursesLessonsIndexError = CoursesLessonsIndexErrors[keyof CoursesLessonsIndexErrors];
+
 export type CoursesLessonsIndexResponses = {
   /**
    * The request has succeeded.
@@ -195,6 +245,10 @@ export type CoursesLessonsCreateData = {
 
 export type CoursesLessonsCreateErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -210,6 +264,10 @@ export type CoursesLessonsCreateErrors = {
    * Client error
    */
   422: UnprocessableEntityError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type CoursesLessonsCreateError =
@@ -237,9 +295,17 @@ export type CoursesLessonsShowData = {
 
 export type CoursesLessonsShowErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * The server cannot find the requested resource.
    */
   404: NotFoundError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type CoursesLessonsShowError = CoursesLessonsShowErrors[keyof CoursesLessonsShowErrors];
@@ -265,6 +331,10 @@ export type CoursesDestroyData = {
 
 export type CoursesDestroyErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -276,6 +346,10 @@ export type CoursesDestroyErrors = {
    * The server cannot find the requested resource.
    */
   404: NotFoundError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type CoursesDestroyError = CoursesDestroyErrors[keyof CoursesDestroyErrors];
@@ -300,9 +374,17 @@ export type CoursesShowData = {
 
 export type CoursesShowErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * The server cannot find the requested resource.
    */
   404: NotFoundError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type CoursesShowError = CoursesShowErrors[keyof CoursesShowErrors];
@@ -327,6 +409,10 @@ export type CoursesUpdateData = {
 
 export type CoursesUpdateErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -342,6 +428,10 @@ export type CoursesUpdateErrors = {
    * Client error
    */
   422: UnprocessableEntityError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type CoursesUpdateError = CoursesUpdateErrors[keyof CoursesUpdateErrors];
@@ -364,6 +454,10 @@ export type TokensCreateData = {
 
 export type TokensCreateErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -371,6 +465,10 @@ export type TokensCreateErrors = {
    * Client error
    */
   422: UnprocessableEntityError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type TokensCreateError = TokensCreateErrors[keyof TokensCreateErrors];
@@ -395,9 +493,17 @@ export type UsersIndexData = {
 
 export type UsersIndexErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type UsersIndexError = UsersIndexErrors[keyof UsersIndexErrors];
@@ -422,9 +528,17 @@ export type UsersCreateData = {
 
 export type UsersCreateErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Client error
    */
   422: UnprocessableEntityError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type UsersCreateError = UsersCreateErrors[keyof UsersCreateErrors];
@@ -449,6 +563,10 @@ export type UsersDestroyData = {
 
 export type UsersDestroyErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -456,6 +574,10 @@ export type UsersDestroyErrors = {
    * The server cannot find the requested resource.
    */
   404: NotFoundError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type UsersDestroyError = UsersDestroyErrors[keyof UsersDestroyErrors];
@@ -480,6 +602,10 @@ export type UsersShowData = {
 
 export type UsersShowErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -487,6 +613,10 @@ export type UsersShowErrors = {
    * The server cannot find the requested resource.
    */
   404: NotFoundError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type UsersShowError = UsersShowErrors[keyof UsersShowErrors];
@@ -511,6 +641,10 @@ export type UsersUpdateData = {
 
 export type UsersUpdateErrors = {
   /**
+   * The server could not understand the request due to invalid syntax.
+   */
+  400: BadRequestError;
+  /**
    * Access is unauthorized.
    */
   401: UnauthorizedError;
@@ -522,6 +656,10 @@ export type UsersUpdateErrors = {
    * Client error
    */
   422: UnprocessableEntityError;
+  /**
+   * Client error
+   */
+  429: TooManyRequestsError;
 };
 
 export type UsersUpdateError = UsersUpdateErrors[keyof UsersUpdateErrors];

@@ -74,6 +74,10 @@ generate-types: generate-openapi generate-openapi-ts-types
 generate-check: generate-types
 	git diff --exit-code -- tsp-output types/handlers
 
+# Контрактные тесты поверх спеки: см. комментарий в самом скрипте.
+contract-test:
+	./scripts/contract-test.sh
+
 mock:
 	pnpm exec prism mock ./tsp-output/@typespec/openapi3/openapi.v1.json
 
@@ -82,4 +86,4 @@ install:
 
 .PHONY: install test dev check-types deps-update routes migration-generate \
 	lint lint-fix generate-openapi generate-openapi-ts-types generate-types \
-	generate-check migration-check mock test-coverage lint-openapi
+	generate-check migration-check mock test-coverage lint-openapi contract-test

@@ -67,6 +67,28 @@ test("public operations stay reachable without a token", async () => {
   assert.deepStrictEqual(failures, []);
 });
 
+// Токен остаётся подписанным и не истёкшим после удаления аккаунта. Раньше
+// такой запрос доходил до обработчика и падал на внешнем ключе с 500.
+test("a token for a deleted user no longer authenticates", async () => {
+  const app = await build();
+  const user = await app.db.query.users.findFirst();
+  assert.ok(user);
+  const authHeader = await getAuthHeader(app, user.id);
+
+  const before = await app.inject({ url: "/users", headers: { ...authHeader } });
+  assert.equal(before.statusCode, 200, before.body);
+
+  const deleted = await app.inject({
+    method: "delete",
+    url: `/users/${user.id}`,
+    headers: { ...authHeader },
+  });
+  assert.equal(deleted.statusCode, 204, deleted.body);
+
+  const after = await app.inject({ url: "/users", headers: { ...authHeader } });
+  assert.equal(after.statusCode, 401, after.body);
+});
+
 test("protected operations accept a valid token", async () => {
   const app = await build();
   const authHeader = await getAuthHeader(app);

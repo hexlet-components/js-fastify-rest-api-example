@@ -20,7 +20,9 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "number",
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
               "default": 1
             },
             "explode": false
@@ -47,6 +49,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
+                }
+              }
+            }
           }
         }
       },
@@ -61,6 +83,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Course"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -81,6 +113,16 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -113,7 +155,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           },
           {
@@ -121,7 +165,9 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "number",
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
               "default": 1
             },
             "explode": false
@@ -148,6 +194,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
+                }
+              }
+            }
           }
         }
       },
@@ -160,7 +226,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
@@ -171,6 +239,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CourseLesson"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -211,6 +289,16 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -243,7 +331,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           },
           {
@@ -251,7 +341,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
@@ -266,12 +358,32 @@
               }
             }
           },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
           "404": {
             "description": "The server cannot find the requested resource.",
             "content": {
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -289,7 +401,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
@@ -304,12 +418,32 @@
               }
             }
           },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
           "404": {
             "description": "The server cannot find the requested resource.",
             "content": {
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -325,7 +459,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
@@ -336,6 +472,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Course"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -376,6 +522,16 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -406,13 +562,25 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
         "responses": {
           "204": {
             "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
           },
           "401": {
             "description": "Access is unauthorized.",
@@ -443,6 +611,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -468,6 +646,16 @@
               }
             }
           },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Access is unauthorized.",
             "content": {
@@ -484,6 +672,16 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -511,7 +709,9 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "number",
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
               "default": 1
             },
             "explode": false
@@ -539,12 +739,32 @@
               }
             }
           },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Access is unauthorized.",
             "content": {
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -571,12 +791,32 @@
               }
             }
           },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Client error",
             "content": {
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -604,7 +844,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
@@ -615,6 +857,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -638,6 +890,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -655,7 +917,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
@@ -666,6 +930,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -696,6 +970,16 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnprocessableEntityError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -726,13 +1010,25 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
             }
           }
         ],
         "responses": {
           "204": {
             "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
           },
           "401": {
             "description": "Access is unauthorized.",
@@ -750,6 +1046,16 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TooManyRequestsError"
                 }
               }
             }
@@ -778,6 +1084,26 @@
           "password": {
             "type": "string",
             "format": "password"
+          }
+        }
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
           }
         }
       },
@@ -939,6 +1265,26 @@
           }
         }
       },
+      "TooManyRequestsError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          }
+        }
+      },
       "UnauthorizedError": {
         "type": "object",
         "properties": {
@@ -1034,7 +1380,9 @@
         ],
         "properties": {
           "fullName": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
           },
           "email": {
             "type": "string"
@@ -1050,7 +1398,9 @@
         "type": "object",
         "properties": {
           "fullName": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
           },
           "password": {
             "type": "string",

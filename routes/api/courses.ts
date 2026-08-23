@@ -47,6 +47,12 @@ const handlers = defineHandlers({
     }
 
     const validated = await CourseValidator.validateEdit(request.db, request.body);
+    // Все поля CourseEditDTO необязательные, поэтому тело может оказаться
+    // пустым. drizzle на пустом set бросает «No values to set» — это был 500.
+    if (Object.keys(validated).length === 0) {
+      return reply.code(200).send(course);
+    }
+
     const [updated] = await request.db
       .update(schemas.courses)
       .set(validated)

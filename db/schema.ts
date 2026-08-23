@@ -25,8 +25,10 @@ export const users = sqliteTable("users", {
 export const courses = sqliteTable("courses", {
   id: integer("id").primaryKey(),
   name: text("name").notNull(),
+  // Каскад, а не запрет: контракт обещает у DELETE только 204, и удаление
+  // автора курсов иначе падало в 500 на нарушении внешнего ключа.
   creatorId: integer("creator_id")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   description: text("description").notNull(),
   ...timestamps,
@@ -36,7 +38,7 @@ export const courseLessons = sqliteTable("course_lessons", {
   id: integer("id").primaryKey(),
   name: text("name").notNull(),
   courseId: integer("courseId")
-    .references(() => courses.id)
+    .references(() => courses.id, { onDelete: "cascade" })
     .notNull(),
   body: text("body").notNull(),
   ...timestamps,

@@ -2,6 +2,7 @@
 
 export type {
   AuthInfo,
+  BadRequestError,
   ClientOptions,
   Course,
   CourseCreateDto,
@@ -19,6 +20,8 @@ export type {
   CoursesDestroyResponse,
   CoursesDestroyResponses,
   CoursesIndexData,
+  CoursesIndexError,
+  CoursesIndexErrors,
   CoursesIndexResponse,
   CoursesIndexResponses,
   CoursesLessonsCreateData,
@@ -27,6 +30,8 @@ export type {
   CoursesLessonsCreateResponse,
   CoursesLessonsCreateResponses,
   CoursesLessonsIndexData,
+  CoursesLessonsIndexError,
+  CoursesLessonsIndexErrors,
   CoursesLessonsIndexResponse,
   CoursesLessonsIndexResponses,
   CoursesLessonsShowData,
@@ -54,6 +59,7 @@ export type {
   TokensCreateErrors,
   TokensCreateResponse,
   TokensCreateResponses,
+  TooManyRequestsError,
   UnauthorizedError,
   UnprocessableEntityError,
   User,
