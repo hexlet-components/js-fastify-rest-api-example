@@ -34,7 +34,7 @@ REST API на [Fastify](https://fastify.dev/), собранный «по-взр�
 
 ```bash
 make install
-cp .env.example .env    # и подставить JWT_SECRET
+echo "JWT_SECRET=$(openssl rand -hex 32)" >> .env   # см. .env.example
 make dev
 make test
 ```
