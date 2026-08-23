@@ -1,78 +1,72 @@
 import { test } from "vitest";
 import * as assert from "node:assert";
-import { getAuthHeader, build } from "../../helper.ts";
-import { buildCourse } from "../../../lib/data.ts";
 import { pick } from "es-toolkit";
+import { buildClient, getAuthHeader, responseOf } from "../../helper.ts";
+import { buildCourse } from "../../../lib/data.ts";
+import {
+  coursesCreate,
+  coursesDestroy,
+  coursesIndex,
+  coursesShow,
+  coursesUpdate,
+} from "../../../types/handlers/sdk.gen.js";
+
+// Тесты ходят сгенерированным из спеки клиентом: URL, методы и формы тел
+// берутся из контракта, а не переписываются здесь руками.
 
 test("get courses", async () => {
-  const app = await build();
+  const { client } = await buildClient();
 
-  const res = await app.inject({
-    url: "/courses",
-  });
-  assert.equal(res.statusCode, 200, res.body);
+  const res = await coursesIndex({ client });
+  assert.equal(responseOf(res).status, 200);
 });
 
 test("get courses/:id", async () => {
-  const app = await build();
+  const { app, client } = await buildClient();
 
   const course = await app.db.query.courses.findFirst();
   assert.ok(course);
 
-  const res = await app.inject({
-    url: `/courses/${course.id}`,
-  });
-  assert.equal(res.statusCode, 200, res.body);
+  const res = await coursesShow({ client, path: { id: course.id } });
+  assert.equal(responseOf(res).status, 200);
 });
 
 test("post courses", async () => {
-  const app = await build();
-  const body = buildCourse();
+  const { app, client } = await buildClient();
 
-  const authHeader = await getAuthHeader(app);
-  const res = await app.inject({
-    method: "post",
-    url: `/courses`,
-    headers: {
-      ...authHeader,
-    },
-    body: body,
+  const res = await coursesCreate({
+    client,
+    headers: await getAuthHeader(app),
+    body: pick(buildCourse(), ["name", "description"]),
   });
-  assert.equal(res.statusCode, 201, res.body);
+  assert.equal(responseOf(res).status, 201, JSON.stringify(res.error));
 });
 
 test("put courses/:id", async () => {
-  const app = await build();
+  const { app, client } = await buildClient();
 
   const course = await app.db.query.courses.findFirst();
   assert.ok(course);
 
-  const authHeader = await getAuthHeader(app, course.creatorId);
-  const res = await app.inject({
-    method: "put",
-    url: `/courses/${course.id}`,
-    headers: {
-      ...authHeader,
-    },
+  const res = await coursesUpdate({
+    client,
+    headers: await getAuthHeader(app, course.creatorId),
+    path: { id: course.id },
     body: pick(buildCourse(), ["name", "description"]),
   });
-  assert.equal(res.statusCode, 200, res.body);
+  assert.equal(responseOf(res).status, 200, JSON.stringify(res.error));
 });
 
 test("delete courses/:id", async () => {
-  const app = await build();
+  const { app, client } = await buildClient();
 
   const course = await app.db.query.courses.findFirst();
   assert.ok(course);
 
-  const authHeader = await getAuthHeader(app, course.creatorId);
-  const res = await app.inject({
-    method: "delete",
-    headers: {
-      ...authHeader,
-    },
-    url: `/courses/${course.id}`,
+  const res = await coursesDestroy({
+    client,
+    headers: await getAuthHeader(app, course.creatorId),
+    path: { id: course.id },
   });
-
-  assert.equal(res.statusCode, 204, res.body);
+  assert.equal(responseOf(res).status, 204, JSON.stringify(res.error));
 });
