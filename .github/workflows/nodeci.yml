@@ -8,14 +8,14 @@ on:
     branches:
       - main
 
-# Пуш в ветку с открытым PR запускает сборку дважды. Прошлый прогон отменяется,
-# кроме main: там история сборок нужна целиком.
+# Пуш в ветку с открытым PR запускает проверки дважды. Прошлый прогон
+# отменяется, кроме main: там история прогонов нужна целиком.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
 
     strategy:
