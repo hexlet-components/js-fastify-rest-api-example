@@ -1,4 +1,4 @@
-import type { drizzle } from "drizzle-orm/better-sqlite3";
+import type { drizzle } from "drizzle-orm/pglite";
 import "@fastify/jwt";
 // import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 // import { Type } from '@sinclair/typebox'

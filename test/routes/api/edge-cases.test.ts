@@ -121,3 +121,19 @@ test("a full name shorter than the response model allows is rejected", async () 
 
   assert.equal(res.statusCode, 400, res.body);
 });
+
+// Postgres не хранит NUL в text-колонках, и без проверки на входе такой ввод
+// доезжал до insert и уходил наружу как 500. Нашёл контрактный прогон.
+test("a NUL character in a text field is rejected, not stored", async () => {
+  const app = await build();
+
+  const res = await app.inject({
+    method: "post",
+    url: "/users",
+    body: { email: "nul\u0000@hexlet.io", password: "correct-horse-battery-staple" },
+  });
+  assert.equal(res.statusCode, 400, res.body);
+
+  const stored = await app.db.query.users.findMany();
+  assert.ok(!stored.some((user) => user.email.includes("nul")));
+});

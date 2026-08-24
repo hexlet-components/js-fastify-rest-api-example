@@ -11,6 +11,7 @@
     "test": "test"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.6",
     "@fastify/autoload": "^6.5.0",
     "@fastify/cors": "^11.3.0",
     "@fastify/env": "^7.0.0",
@@ -29,7 +30,6 @@
     "@scalar/fastify-api-reference": "^1.66.1",
     "@typespec/openapi": "^1.15.0",
     "ajv-formats": "^3.0.1",
-    "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.2",
     "es-toolkit": "^1.51.0",
     "fastify": "^5.12.1",
@@ -44,7 +44,6 @@
     "@hey-api/openapi-ts": "0.0.0-next-20260819153534",
     "@redocly/cli": "^2.47.0",
     "@stoplight/prism-cli": "^5.16.0",
-    "@types/better-sqlite3": "^9.6.0",
     "@typespec/compiler": "^1.15.0",
     "@typespec/http": "^1.15.0",
     "@typespec/json-schema": "^1.15.0",
@@ -64,8 +63,8 @@
   },
   "scripts": {
     "test": "vitest run",
-    "start": "NODE_OPTIONS='--import ./src/telemetry.ts' fastify start -l info src/app.ts",
-    "dev": "FASTIFY_AUTOLOAD_TYPESCRIPT=1 NODE_OPTIONS='--import ./src/telemetry.ts' fastify start -w -l info -P src/app.ts",
+    "start": "NODE_OPTIONS='--import ./src/telemetry.ts' fastify start -l info --plugin-timeout 60000 src/app.ts",
+    "dev": "FASTIFY_AUTOLOAD_TYPESCRIPT=1 NODE_OPTIONS='--import ./src/telemetry.ts' fastify start -w -l info -P --plugin-timeout 60000 src/app.ts",
     "lint": "oxlint --config=.oxlintrc.json .",
     "lint:fix": "oxfmt --ignore-path=.oxfmtignore . && oxlint --config=.oxlintrc.json --fix .",
     "format": "oxfmt --ignore-path=.oxfmtignore .",

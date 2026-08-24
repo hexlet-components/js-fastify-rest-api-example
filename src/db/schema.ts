@@ -1,24 +1,28 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-// Точность миллисекундная: из updatedAt строится ETag, а при секундной две
-// правки в пределах одной секунды дают одинаковый валидатор.
+// Нативный timestamptz, а не число: тип колонки теперь говорит, что в ней
+// лежит время. Раньше это был integer с unix-миллисекундами, и смысл колонки
+// держался на кодеке drizzle да на комментарии рядом.
 //
 // Таймстемпы ведёт drizzle, а не SQL-дефолты: updatedAt иначе не обновляется
 // никогда — обработчики его не писали, а DEFAULT срабатывает только на INSERT.
-// Тип integer, а не text: раньше default (unixepoch()) клал число в текстовую
-// колонку, и наружу уезжала строка вида "1787349516".
 const timestamps = {
-  createdAt: integer("created_at", { mode: "timestamp_ms" })
+  createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .$defaultFn(() => new Date())
     .$onUpdate(() => new Date()),
 };
 
-export const users = sqliteTable("users", {
-  id: integer("id").primaryKey(),
+// byDefault, а не always: identity always отвергает вставку с явным id, и
+// сиды с тестами, которые заводят строку целиком, упёрлись бы в него. В
+// sqlite id был алиасом rowid и подставлялся сам — byDefault повторяет это.
+const id = integer("id").primaryKey().generatedByDefaultAsIdentity();
+
+export const users = pgTable("users", {
+  id,
   fullName: text("full_name"),
   email: text("email").notNull().unique(),
   passwordDigest: text("password_digest").notNull(),
@@ -29,8 +33,8 @@ export const users = sqliteTable("users", {
   ...timestamps,
 });
 
-export const courses = sqliteTable("courses", {
-  id: integer("id").primaryKey(),
+export const courses = pgTable("courses", {
+  id,
   name: text("name").notNull(),
   // Запрет, а не каскад: курс не перестаёт существовать от того, что автор
   // ушёл. Что делать с осиротевшими курсами — решение приложения, и оно
@@ -42,8 +46,8 @@ export const courses = sqliteTable("courses", {
   ...timestamps,
 });
 
-export const courseLessons = sqliteTable("course_lessons", {
-  id: integer("id").primaryKey(),
+export const courseLessons = pgTable("course_lessons", {
+  id,
   name: text("name").notNull(),
   // Тоже запрет, хотя урок вне курса не существует: удаление уроков делает
   // обработчик в транзакции. Поведение видно в коде, а не только в миграции.

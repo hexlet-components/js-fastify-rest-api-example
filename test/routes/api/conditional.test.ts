@@ -1,6 +1,8 @@
 import { test } from "vitest";
 import * as assert from "node:assert";
+import { eq } from "drizzle-orm";
 import { build, getAuthHeader } from "../../helper.ts";
+import * as schemas from "../../../src/db/schema.ts";
 
 // Без условных запросов два одновременных PUT молча перезаписывают друг друга:
 // второй не знает, что запись изменилась после того, как он её прочитал.
@@ -49,7 +51,11 @@ test("a stale If-Match is rejected instead of overwriting", async () => {
   });
   assert.equal(conflicting.statusCode, 412, conflicting.body);
 
-  const stored = await app.db.query.courses.findFirst();
+  // Перечитывается именно та запись, а не «первая»: без ORDER BY postgres
+  // порядок строк не обещает, и после UPDATE запись уезжает в конец.
+  const stored = await app.db.query.courses.findFirst({
+    where: eq(schemas.courses.id, course.id),
+  });
   assert.equal(stored?.name, "Changed by someone else");
 });
 

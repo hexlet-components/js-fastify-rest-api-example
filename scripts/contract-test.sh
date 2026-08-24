@@ -16,9 +16,12 @@ export JWT_SECRET="${JWT_SECRET:-$(openssl rand -hex 32)}"
 # подряд и упирается в него, а не в поведение API.
 export RATE_LIMIT_MAX=1000000
 # Шеддинг под нагрузкой мешает так же, как лимитер: schemathesis шлёт сотни
-# запросов подряд и упирается в 503, а не в поведение API.
-export MAX_EVENT_LOOP_DELAY=600000
-export MAX_EVENT_LOOP_UTILIZATION=1
+# запросов подряд и упирается в 503, а не в поведение API. Ноль, а не заведомо
+# большой порог: под нагрузкой гистограмма monitorEventLoopDelay возвращает
+# mean = Infinity, и любое конечное значение оказывается меньше. Ноль
+# under-pressure понимает как «проверку не делать вовсе».
+export MAX_EVENT_LOOP_DELAY=0
+export MAX_EVENT_LOOP_UTILIZATION=0
 
 # Порт проверяется до запуска: если на нём кто-то уже слушает, прогон уходил в
 # чужой процесс и зеленел, ничего не проверив в текущем коде. Молчаливое ложное
@@ -30,7 +33,7 @@ if curl -sf "$BASE/openapi.json" >/dev/null 2>&1; then
 fi
 
 LOG=$(mktemp)
-pnpm exec fastify start -l error -p "$PORT" src/app.ts >"$LOG" 2>&1 &
+pnpm exec fastify start -l error -p "$PORT" --plugin-timeout 60000 src/app.ts >"$LOG" 2>&1 &
 APP_PID=$!
 trap 'kill "$APP_PID" 2>/dev/null || true; rm -f "$LOG"' EXIT
 

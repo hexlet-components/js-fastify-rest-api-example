@@ -12,7 +12,10 @@ import { createClient, createConfig } from "../src/types/handlers/v1/client/inde
 // any, а покрытие показывало по обработчикам единицы процентов при живых
 // тестах на них.
 async function build(): Promise<FastifyInstance> {
-  const fastify = Fastify({ logger: { level: "error" } });
+  // pluginTimeout поднят с дефолтных 10 секунд: drizzle поднимает PGlite —
+  // postgres в wasm — прогоняет миграции и сиды, и на параллельном прогоне
+  // десятка файлов старт в десять секунд не укладывается.
+  const fastify = Fastify({ logger: { level: "error" }, pluginTimeout: 60_000 });
   // fp снимает инкапсуляцию, и декораторы приложения (db, jwt) видны снаружи.
   // В бою так не нужно — это только чтобы тесты могли дотянуться до базы.
   fastify.register(fp(app));

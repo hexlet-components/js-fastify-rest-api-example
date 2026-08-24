@@ -13,6 +13,15 @@ import serviceHandlersV2 from "./routes/v2/index.ts";
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 
+// Ключи не проверяются: в колонку уезжают значения, а поля, которых нет в
+// схеме, сериализатор и валидаторы всё равно отбрасывают.
+function containsNul(value: unknown): boolean {
+  if (typeof value === "string") return value.includes("\u0000");
+  if (Array.isArray(value)) return value.some(containsNul);
+  if (value !== null && typeof value === "object") return Object.values(value).some(containsNul);
+  return false;
+}
+
 // Pass --options via CLI arguments in command to enable these options.
 const options: AppOptions = {};
 
@@ -49,6 +58,20 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
         // вплоть до фрагмента запроса к базе.
         detail: status >= 500 ? "Internal Server Error" : error.message,
       });
+  });
+
+  // Postgres не хранит NUL (U+0000) в text-колонках: строка с ним не
+  // сохраняется в принципе. Без этой проверки такой ввод доезжал до insert и
+  // уходил наружу как 500 — нашёл контрактный прогон, генерируя строки со
+  // спецсимволами. Sqlite такое принимал, поэтому раньше проверки не было.
+  //
+  // Хук общий, а не правило в валидаторах: ограничение не бизнес-правило
+  // конкретной модели, а свойство хранилища, и касается каждого текстового
+  // поля во всех операциях.
+  fastify.addHook("preValidation", async (request) => {
+    if (containsNul(request.body)) {
+      throw httpErrors.badRequest("Text fields must not contain the NUL character (U+0000)");
+    }
   });
 
   fastify.addContentTypeParser(

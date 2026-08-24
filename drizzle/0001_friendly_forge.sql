@@ -1,1 +1,0 @@
-ALTER TABLE `users` ADD `password_digest` text NOT NULL;

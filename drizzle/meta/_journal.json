@@ -1,47 +1,12 @@
 {
   "version": "7",
-  "dialect": "sqlite",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "6",
-      "when": 1724955209819,
-      "tag": "0000_omniscient_warbound",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1787444426840,
-      "tag": "0001_friendly_forge",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1787444748820,
-      "tag": "0002_handy_paladin",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1787446852568,
-      "tag": "0003_common_sabra",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1787542465771,
-      "tag": "0004_giant_hammerhead",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1787572540422,
-      "tag": "0005_curious_joshua_kane",
+      "version": "7",
+      "when": 1787575623941,
+      "tag": "0000_nasty_marvel_zombies",
       "breakpoints": true
     }
   ]

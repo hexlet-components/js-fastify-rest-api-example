@@ -10,9 +10,8 @@ import * as schemas from "../../src/db/schema.ts";
 test("updatedAt moves on update and createdAt stays put", async () => {
   const app = await build();
 
-  // Отметка ставится заведомо старой, а не через паузу в тесте: хранятся они с
-  // точностью до секунды, и sleep на секунду ради одного сравнения — плохой
-  // обмен.
+  // Отметка ставится заведомо старой, а не через паузу в тесте: ждать, пока
+  // часы уйдут вперёд, ради одного сравнения — плохой обмен.
   const past = new Date("2020-01-01T00:00:00Z");
   const [user] = await app.db
     .insert(schemas.users)

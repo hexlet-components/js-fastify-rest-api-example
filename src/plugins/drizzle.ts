@@ -1,15 +1,23 @@
-import Database from "better-sqlite3";
+import { PGlite } from "@electric-sql/pglite";
 
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { drizzle } from "drizzle-orm/pglite";
+import { migrate } from "drizzle-orm/pglite/migrator";
 import fp from "fastify-plugin";
 import * as schemas from "../db/schema.ts";
 
 export default fp(
   async (fastify) => {
-    const sqlite = new Database(":memory:");
-    const db = drizzle(sqlite, { schema: schemas });
-    migrate(db, { migrationsFolder: "drizzle" });
+    // PGlite без аргументов — postgres в памяти процесса, отдельного сервиса
+    // по-прежнему нет. Взят ради нативных типов: timestamptz в схеме это
+    // время, а не integer, которому смысл придаёт кодек drizzle.
+    const client = new PGlite();
+    const db = drizzle(client, { schema: schemas });
+    await migrate(db, { migrationsFolder: "drizzle" });
+
+    // Инстанс закрывается вместе с приложением: в отличие от sqlite :memory:,
+    // за каждым PGlite стоит wasm-куча в десятки мегабайт, а тесты поднимают
+    // приложение десятки раз в одном процессе.
+    fastify.addHook("onClose", () => client.close());
 
     // Сиды — инструмент разработки, и импорт у них динамический не для красоты:
     // db/seeds.ts тянет @faker-js/faker из devDependencies, поэтому со

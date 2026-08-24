@@ -18,7 +18,7 @@ export default fp(
         routeOpts: { logLevel: "warn" },
       },
       healthCheck: async () => {
-        await fastify.db.get(sql`select 1`);
+        await fastify.db.execute(sql`select 1`);
         return true;
       },
       healthCheckInterval: 5_000,

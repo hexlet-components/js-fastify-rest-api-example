@@ -1,4 +1,4 @@
-import type { drizzle } from "drizzle-orm/better-sqlite3";
+import type { drizzle } from "drizzle-orm/pglite";
 import type * as schemas from "../db/schema.ts";
 
 // Таблица, а не «схема»: schema в проекте уже занято под другое.

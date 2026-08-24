@@ -1,7 +1,9 @@
 import { test } from "vitest";
 import * as assert from "node:assert";
+import { eq } from "drizzle-orm";
 import { build, getAuthHeader } from "../../helper.ts";
 import { buildCourseLesson } from "../../../src/lib/data.ts";
+import * as schemas from "../../../src/db/schema.ts";
 
 // Возвращает курс и пользователя, который его не создавал.
 async function buildWithOutsider() {
@@ -29,7 +31,9 @@ test("a stranger cannot update someone else's course", async () => {
   });
   assert.equal(res.statusCode, 403, res.body);
 
-  const unchanged = await app.db.query.courses.findFirst();
+  const unchanged = await app.db.query.courses.findFirst({
+    where: eq(schemas.courses.id, course.id),
+  });
   assert.equal(unchanged?.name, course.name);
 });
 

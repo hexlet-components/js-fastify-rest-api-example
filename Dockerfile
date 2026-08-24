@@ -2,11 +2,8 @@
 # TypeScript сам, снимая типы. Поэтому образ копирует исходники как есть.
 FROM node:26-slim AS deps
 
-# better-sqlite3 — нативный модуль, и под slim готового бинаря может не быть:
-# без тулчейна установка падает на сборке.
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends python3 make g++ ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+# Тулчейна для нативных модулей больше нет: PGlite — wasm, собирать под
+# платформу нечего.
 
 # corepack из образов node 26 убран, поэтому pnpm ставится явно — версией из
 # packageManager, чтобы лок-файл читался тем же, что и локально.
@@ -34,4 +31,8 @@ COPY --chown=node:node tsp-output ./tsp-output
 EXPOSE 3000
 
 # Через node_modules напрямую, а не pnpm exec: в рантайме pnpm не нужен.
-CMD ["node", "node_modules/fastify-cli/cli.js", "start", "-l", "info", "-a", "0.0.0.0", "src/app.ts"]
+#
+# --plugin-timeout поднят с дефолтных 10 секунд: drizzle поднимает PGlite и
+# прогоняет миграции, и на холодном старте в контейнере с урезанным CPU это
+# укладывается не всегда. Без запаса контейнер просто не поднимется.
+CMD ["node", "node_modules/fastify-cli/cli.js", "start", "-l", "info", "-a", "0.0.0.0", "--plugin-timeout", "60000", "src/app.ts"]

@@ -33,7 +33,7 @@ migration-generate:
 # check вызывается флагами, а не через конфиг: читая drizzle.config.ts, он
 # принимает dialect за параметр AWS Data API и падает (drizzle-kit 0.31).
 migration-check:
-	pnpm exec drizzle-kit check --dialect sqlite --out ./drizzle
+	pnpm exec drizzle-kit check --dialect postgresql --out ./drizzle
 	pnpm exec drizzle-kit generate
 	@test -z "$$(git status --porcelain drizzle)" || { \
 		echo "Схема изменилась без миграции — запустите make migration-generate:"; \

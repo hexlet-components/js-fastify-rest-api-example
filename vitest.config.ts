@@ -40,8 +40,13 @@ export default defineConfig({
       RATE_LIMIT_MAX: "100000",
       // Шеддинг под нагрузкой выключен: тесты гоняются параллельно, event loop
       // забит по определению, и under-pressure иначе отдаёт 503 на всё.
-      MAX_EVENT_LOOP_DELAY: "600000",
-      MAX_EVENT_LOOP_UTILIZATION: "1",
+      //
+      // Ноль, а не заведомо большой порог: под нагрузкой гистограмма
+      // monitorEventLoopDelay возвращает mean = Infinity, и любое конечное
+      // значение оказывается меньше. Ноль under-pressure понимает как «проверку
+      // не делать вовсе».
+      MAX_EVENT_LOOP_DELAY: "0",
+      MAX_EVENT_LOOP_UTILIZATION: "0",
     },
   },
 });
