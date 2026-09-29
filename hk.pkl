@@ -1,0 +1,45 @@
+// Формат и линт до коммита, а не только в CI: make lint падал на них уже после
+// пуша, а generate-types в конце гоняет форматтер по всему дереву, и разъехаться
+// легко. Хуки ставит `hk install`: на git 2.54+ это записи hook.* в .git/config,
+// общий core.hooksPath дерева кита они не трогают.
+amends "package://github.com/jdx/hk/releases/download/v2.4.0/hk@2.4.0#/Config.pkl"
+
+// Только ts/js: oxfmt другого не форматирует и падает, если в наборе не
+// осталось подходящих файлов.
+local sources = List("**/*.ts", "**/*.js")
+
+local linters = new Mapping<String, Step> {
+  ["format"] {
+    glob = sources
+    check = "pnpm exec oxfmt --ignore-path=.oxfmtignore --check {{files}}"
+    fix = "pnpm exec oxfmt --ignore-path=.oxfmtignore {{files}}"
+  }
+  ["lint"] {
+    glob = sources
+    check = "pnpm exec oxlint --config=.oxlintrc.json {{files}}"
+  }
+}
+
+hooks {
+  // fix возвращает отформатированное в индекс, иначе коммит уедет в старом виде
+  // и format:check в CI всё равно упадёт. stash выключен: на время хука он
+  // откатывает непроиндексированный package.json, pnpm exec видит расхождение
+  // с локом и сам доустанавливает зависимости прямо посреди коммита.
+  ["pre-commit"] {
+    fix = true
+    stash = "none"
+    steps = linters
+  }
+  // Проверка типов только перед пушем: на каждый коммит это слишком долго, а
+  // файлов по отдельности tsc не проверяет.
+  ["pre-push"] {
+    steps {
+      ["types"] { check = "pnpm exec tsc" }
+    }
+  }
+  ["check"] { steps = linters }
+  ["fix"] {
+    fix = true
+    steps = linters
+  }
+}
