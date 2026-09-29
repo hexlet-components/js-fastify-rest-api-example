@@ -98,6 +98,25 @@ test("a NUL character in a text field is rejected, not stored", async ({ app }) 
   expect(stored.filter((user) => user.email.includes("nul"))).toEqual([]);
 });
 
+// Без content-type у fastify нет схемы тела, и пустой запрос доезжал до
+// обработчика: POST /tokens отвечал 500, остальные операции 422 от zod. Нашёл
+// контрактный прогон. Проверка общая, поэтому обходятся все операции с телом.
+test("a request without a body is rejected as a bad request", async ({ app }) => {
+  const authHeader = await getAuthHeader(app);
+  const operations = [
+    ["post", "/v1/tokens"],
+    ["post", "/v2/tokens"],
+    ["post", "/v1/users"],
+    ["post", "/v1/courses"],
+  ] as const;
+
+  for (const [method, url] of operations) {
+    const res = await app.inject({ method, url, headers: { ...authHeader } });
+    expectStatus(res, 400);
+    expect(res.json()).toMatchObject({ status: 400, detail: "Request body is required" });
+  }
+});
+
 // Ни /health, ни /metrics не было: оркестратору нечего опрашивать, а метрик по
 // запросам не существовало вовсе.
 test("health reports the app and its database", async ({ app }) => {

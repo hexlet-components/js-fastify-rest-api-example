@@ -68,7 +68,17 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
   // Хук общий, а не правило в валидаторах: ограничение не бизнес-правило
   // конкретной модели, а свойство хранилища, и касается каждого текстового
   // поля во всех операциях.
+  //
+  // Там же проверяется, что тело вообще пришло. glue описывает тело схемой на
+  // каждый content-type, и fastify выбирает её по заголовку запроса: без
+  // content-type схемы нет, и пустое тело проходит валидацию молча. Флаг
+  // required у requestBody glue при этом отбрасывает, а в контракте каждое
+  // тело обязательное. Такой запрос доезжал до обработчика с body undefined, и
+  // POST /tokens отвечал 500 на обращении к request.body.email.
   fastify.addHook("preValidation", async (request) => {
+    if (request.routeOptions.schema?.body && request.body === undefined) {
+      throw httpErrors.badRequest("Request body is required");
+    }
     if (containsNul(request.body)) {
       throw httpErrors.badRequest("Text fields must not contain the NUL character (U+0000)");
     }
