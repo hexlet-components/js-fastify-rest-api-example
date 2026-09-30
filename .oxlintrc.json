@@ -8,6 +8,7 @@
     "promise",
     "node",
     "jsdoc",
+    "jest",
     "vitest",
     "react",
     "react-perf",
@@ -18,17 +19,21 @@
     "correctness": "error"
   },
   "rules": {
-    "vitest/expect-expect": [
+    "vitest/require-to-throw-message": "off",
+    "vitest/no-standalone-expect": "off",
+    "jest/no-standalone-expect": "off",
+    "jest/valid-expect": [
       "error",
       {
-        "assertFunctionNames": [
-          "expect",
-          "expectStatus",
-          "expectDefined"
-        ]
+        "maxArgs": 2
       }
     ],
-    "vitest/no-standalone-expect": "off"
+    "vitest/valid-expect": [
+      "error",
+      {
+        "maxArgs": 2
+      }
+    ]
   },
   "env": {
     "builtin": true,
