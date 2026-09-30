@@ -4,15 +4,17 @@
 // общий core.hooksPath дерева кита они не трогают.
 amends "package://github.com/jdx/hk/releases/download/v2.4.0/hk@2.4.0#/Config.pkl"
 
-// Только ts/js: oxfmt другого не форматирует и падает, если в наборе не
-// осталось подходящих файлов.
+// Только ts/js: oxfmt другого не форматирует. Флаг
+// --no-error-on-unmatched-pattern нужен коммиту, где все файлы исключены
+// oxfmt.config.ts (сгенерированный клиент в src/types/handlers): без него oxfmt
+// отвечает «Expected at least one target file» и роняет хук.
 local sources = List("**/*.ts", "**/*.js")
 
 local linters = new Mapping<String, Step> {
   ["format"] {
     glob = sources
-    check = "pnpm exec oxfmt --check {{files}}"
-    fix = "pnpm exec oxfmt {{files}}"
+    check = "pnpm exec oxfmt --check --no-error-on-unmatched-pattern {{files}}"
+    fix = "pnpm exec oxfmt --no-error-on-unmatched-pattern {{files}}"
   }
   ["lint"] {
     glob = sources

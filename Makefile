@@ -63,8 +63,10 @@ generate-openapi-ts-types:
 	# pnpm exec openapi-typescript ./tsp-output/@typespec/openapi3/openapi.v1.json -o types/openapi.ts
 	pnpm exec openapi-ts
 
-# Форматтер обязателен последним шагом: генератор пишет в своём стиле, и без
-# него `make lint` падает на сгенерированных файлах после каждой генерации.
+# Сгенерированное коммитится в стиле генератора: oxfmt его пропускает
+# (`ignorePatterns` в oxfmt.config.ts), поэтому generate-check сравнивает вывод
+# генератора с ним самим. Форматтер последним шагом приводит к стилю остальное,
+# например tsp-output.
 generate-types: generate-openapi generate-openapi-ts-types
 	pnpm --silent run format
 
