@@ -11,8 +11,8 @@ local sources = List("**/*.ts", "**/*.js")
 local linters = new Mapping<String, Step> {
   ["format"] {
     glob = sources
-    check = "pnpm exec oxfmt --ignore-path=.oxfmtignore --check {{files}}"
-    fix = "pnpm exec oxfmt --ignore-path=.oxfmtignore {{files}}"
+    check = "pnpm exec oxfmt --check {{files}}"
+    fix = "pnpm exec oxfmt {{files}}"
   }
   ["lint"] {
     glob = sources
