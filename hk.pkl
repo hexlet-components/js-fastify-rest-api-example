@@ -16,7 +16,7 @@ local linters = new Mapping<String, Step> {
   }
   ["lint"] {
     glob = sources
-    check = "pnpm exec oxlint --config=.oxlintrc.json {{files}}"
+    check = "pnpm exec oxlint {{files}}"
   }
 }
 
