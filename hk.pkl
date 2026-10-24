@@ -1,47 +1,77 @@
-// Формат и линт до коммита, а не только в CI: make lint падал на них уже после
-// пуша, а generate-types в конце гоняет форматтер по всему дереву, и разъехаться
-// легко. Хуки ставит `hk install`: на git 2.54+ это записи hook.* в .git/config,
+// Хуки ставит `hk install`: на git 2.54+ это записи hook.* в .git/config,
 // общий core.hooksPath дерева кита они не трогают.
-amends "package://github.com/jdx/hk/releases/download/v2.4.0/hk@2.4.0#/Config.pkl"
+amends "package://github.com/jdx/hk/releases/download/v2.8.1/hk@2.8.1#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v2.8.1/hk@2.8.1#/Builtins.pkl"
 
-// Только ts/js: oxfmt другого не форматирует. Флаг
-// --no-error-on-unmatched-pattern нужен коммиту, где все файлы исключены
-// oxfmt.config.ts (сгенерированный клиент в src/types/handlers): без него oxfmt
-// отвечает «Expected at least one target file» и роняет хук.
-local sources = List("**/*.ts", "**/*.js")
-
-local linters = new Mapping<String, Step> {
+// Быстрые проверки идут на каждый коммит. Сеть и долгие шаги вынесены в all:
+// их гоняют check, pre-push и CI.
+local fast = new Mapping<String, Step> {
   ["format"] {
-    glob = sources
+    glob = List("**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs", "**/*.cjs")
     check = "pnpm exec oxfmt --check --no-error-on-unmatched-pattern {{files}}"
     fix = "pnpm exec oxfmt --no-error-on-unmatched-pattern {{files}}"
   }
   ["lint"] {
-    glob = sources
+    glob = List("**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs", "**/*.cjs")
     check = "pnpm exec oxlint {{files}}"
+  }
+  ["hadolint"] {
+    glob = List("**/Dockerfile*")
+    check = "hadolint {{files}}"
+  }
+  ["shellcheck"] {
+    glob = List("**/*.sh")
+    check = "shellcheck {{files}}"
+  }
+  ["sqruff"] {
+    glob = List("**/*.sql")
+    check = "sqruff lint {{files}}"
+    fix = "sqruff fix {{files}}"
+  }
+  ["agnix"] {
+    glob = List("**/AGENTS.md", "**/SKILL.md")
+    check = "agnix ."
+  }
+  ["rumdl"] = Builtins.rumdl
+  ["typos"] = Builtins.typos
+  ["jactionlint"] = Builtins.jactionlint
+}
+
+local all = (fast) {
+  ["typecheck"] {
+    glob = List("**/*.ts", "**/*.tsx", "tsconfig.json")
+    check = "pnpm exec tsc --noEmit"
+  }
+  ["lychee"] {
+    glob = List("**/*.md")
+    check = "lychee --config lychee.toml --no-progress {{files}}"
   }
 }
 
 hooks {
-  // fix возвращает отформатированное в индекс, иначе коммит уедет в старом виде
-  // и format:check в CI всё равно упадёт. stash выключен: на время хука он
-  // откатывает непроиндексированный package.json, pnpm exec видит расхождение
-  // с локом и сам доустанавливает зависимости прямо посреди коммита.
+  // stash выключен: на время хука он откатывает непроиндексированные файлы
+  // рабочего дерева, в том числе чужие правки параллельной сессии.
   ["pre-commit"] {
     fix = true
     stash = "none"
-    steps = linters
+    steps = fast
   }
-  // Проверка типов только перед пушем: на каждый коммит это слишком долго, а
-  // файлов по отдельности tsc не проверяет.
-  ["pre-push"] {
+  // История читается release-please, а коммиты идут прямо в main, поэтому
+  // заголовок проверяется до записи. В CI тот же commitlint гоняется по
+  // диапазону пуша.
+  ["commit-msg"] {
     steps {
-      ["types"] { check = "pnpm exec tsc" }
+      ["commitlint"] {
+        check = "commitlint --edit {{commit_msg_file}}"
+      }
     }
   }
-  ["check"] { steps = linters }
+  ["pre-push"] {
+    steps = all
+  }
+  ["check"] { steps = all }
   ["fix"] {
     fix = true
-    steps = linters
+    steps = all
   }
 }

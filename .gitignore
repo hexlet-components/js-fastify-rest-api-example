@@ -63,3 +63,4 @@ profile*
 
 # базовая спека для oasdiff в CI
 .oasdiff
+.lycheecache
