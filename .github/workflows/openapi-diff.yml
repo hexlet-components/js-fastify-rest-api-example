@@ -9,15 +9,22 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
 
 jobs:
   diff:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       # Файл кладётся в рабочую копию, а не в /tmp: oasdiff запускается
@@ -26,14 +33,14 @@ jobs:
       - name: Extract the base version of the spec
         run: |
           mkdir -p .oasdiff
-          git show "origin/${{ github.base_ref }}:tsp-output/@typespec/openapi3/openapi.v1.json" \
+          git show "origin/${GITHUB_BASE_REF}:tsp-output/@typespec/openapi3/openapi.v1.json" \
             > .oasdiff/base.json \
             || cp tsp-output/@typespec/openapi3/openapi.v1.json .oasdiff/base.json
           test -s .oasdiff/base.json
 
       - name: Report breaking changes
         continue-on-error: true
-        uses: oasdiff/oasdiff-action/breaking@main
+        uses: oasdiff/oasdiff-action/breaking@9ce3a29eb0e6478dd0140932a678c7fb59d08f22 # v0.1.20
         with:
           base: .oasdiff/base.json
           revision: tsp-output/@typespec/openapi3/openapi.v1.json
