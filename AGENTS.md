@@ -35,7 +35,7 @@
   трогается. Значения в шаблоне рабочие, для дева и тестов ничего вписывать не
   надо.
 - `make install` — только зависимости.
-- `make dev` — запуск с перезагрузкой на http://localhost:3000. Требует `.env`,
+- `make dev` — запуск с перезагрузкой на <http://localhost:3000>. Требует `.env`,
   как и `make routes`.
 - `make test` / `make test-coverage` — vitest, второй с порогами покрытия.
 - `make lint` / `make lint-fix` — oxlint, tsc, формат и линт спеки.
