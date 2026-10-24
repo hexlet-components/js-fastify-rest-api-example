@@ -30,7 +30,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
   // и отдавать их надо в этом виде. Раньше так уходил только ZodError, а
   // остальное — дефолтным форматом fastify: пока 404 не наступал никогда, это
   // было незаметно.
-  fastify.setErrorHandler((error: Error & { statusCode?: number }, _request, reply) => {
+  fastify.setErrorHandler((error: Error & { statusCode?: number }, request, reply) => {
     if (error instanceof z.ZodError) {
       const errors = error.issues.map((issue) => ({
         message: issue.message,
@@ -48,6 +48,8 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
     }
 
     const status = typeof error.statusCode === "number" ? error.statusCode : 500;
+    // Текст 5xx наружу не уходит, поэтому причину сохраняем в лог.
+    if (status >= 500) request.log.error(error);
     reply
       .type("application/problem+json")
       .code(status)
@@ -78,6 +80,12 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
   fastify.addHook("preValidation", async (request) => {
     if (request.routeOptions.schema?.body && request.body === undefined) {
       throw httpErrors.badRequest("Request body is required");
+    }
+    // Тело, не разобранное как JSON (например text/plain), приходит строкой, схемы
+    // под такой content-type нет, и обработчик падал на request.body.email с 500.
+    // 415 был бы точнее, но в контракте объявлен только 400 для некорректного тела.
+    if (request.routeOptions.schema?.body && typeof request.body !== "object") {
+      throw httpErrors.badRequest("Content-Type must be application/json");
     }
     if (containsNul(request.body)) {
       throw httpErrors.badRequest("Text fields must not contain the NUL character (U+0000)");
