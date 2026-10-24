@@ -215,3 +215,53 @@ reason = "Обновление лока ломает Contract Tests, разбо�
 id = "GHSA-xp26-3454-mjgp"
 ignoreUntil = 2026-11-24
 reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-67mh-4wv8-2f99"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-724g-mxrg-4qvm"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-f23m-r3pf-42rh"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-hhx9-57xq-r5rw"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-pm4m-ph32-ghv5"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-qxc2-j82w-r537"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-r3ph-w7gj-g6xm"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-r5fr-rjxr-66jc"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-w5hq-g745-h8pq"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-xxjr-mmjv-4gpg"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
