@@ -1,171 +1,217 @@
-# Находки, которые обновлением лока не закрыть. Запись действует до ignoreUntil.
+# Обновление зависимостей ломает контрактные тесты (Server error on undeclared request Content-Type),
+# причина разбирается отдельно. Запись действует до ignoreUntil.
 
 [[IgnoredVulns]]
-id = "GHSA-2gqq-gqf2-x968"
+id = "GHSA-2883-xcg3-v3hh"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-2jfj-6hjv-fm6j"
+id = "GHSA-2q42-4q24-7rgv"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-35p6-xmwp-9g52"
+id = "GHSA-2vr4-cq9g-pvrc"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-3xpg-4rpp-hhhm"
+id = "GHSA-333x-w4r6-6crp"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-4cwx-7wf7-3272"
+id = "GHSA-4mh8-r7rc-xpvc"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-4qv8-2p9j-2685"
+id = "GHSA-4mjr-xmp4-gh2g"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-67mh-4wv8-2f99"
+id = "GHSA-587h-7wmj-h5pm"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-724g-mxrg-4qvm"
+id = "GHSA-5gmw-xhrv-c9v3"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-8436-99hf-9mmv"
+id = "GHSA-5jgf-p345-68v8"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-8xcm-r25x-g524"
+id = "GHSA-667r-xxjv-c9mm"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-f23m-r3pf-42rh"
+id = "GHSA-68fv-2mgg-jv7q"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-f72v-6w45-q472"
+id = "GHSA-698v-4r3x-3vcv"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-g8m3-5g58-fq7m"
+id = "GHSA-6j4f-fj2g-mc7p"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-hhx9-57xq-r5rw"
+id = "GHSA-85c8-ppgw-ccpr"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-hm92-r4w5-c3mj"
+id = "GHSA-9jrq-w75r-8gcw"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-jr45-8vmc-qm54"
+id = "GHSA-9q9j-q6p8-xq58"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-m8rv-5g2x-5cg5"
+id = "GHSA-f596-whhp-79r4"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-p88m-4jfj-68fv"
+id = "GHSA-f65p-4m7j-42xc"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-pm4m-ph32-ghv5"
+id = "GHSA-fph4-wmhf-6fwf"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-pmjh-fq2x-6v4x"
+id = "GHSA-h3mg-xc3c-68pw"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-pr7r-676h-xcf6"
+id = "GHSA-hrr3-gc8f-f4qj"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-qxc2-j82w-r537"
+id = "GHSA-hwr6-493r-vm6h"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-r3ph-w7gj-g6xm"
+id = "GHSA-j6r3-76f7-8jcv"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-r53p-7pc4-xj5r"
+id = "GHSA-jggr-w7fw-pc2j"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-r5fr-rjxr-66jc"
+id = "GHSA-jqff-g426-hqxp"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-rfgv-xxqx-mfg5"
+id = "GHSA-m9gg-hp2v-232j"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-rx4f-c7p8-82vq"
+id = "GHSA-mrhx-c7xc-m3w5"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-v3r7-h72x-cjcm"
+id = "GHSA-p68q-wchp-6fh7"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-vmh5-mc38-953g"
+id = "GHSA-q2hr-2g5m-vwhr"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-vxpw-j846-p89q"
+id = "GHSA-qhr7-859c-m2p7"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-w293-vg96-wgc3"
+id = "GHSA-qw65-cvwx-89v3"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-w5hq-g745-h8pq"
+id = "GHSA-qxg6-89mg-rqv8"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-xjj6-f33q-929c"
+id = "GHSA-r825-w8mm-5pxw"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
 
 [[IgnoredVulns]]
-id = "GHSA-xxjr-mmjv-4gpg"
+id = "GHSA-rpw4-54j3-4h4q"
 ignoreUntil = 2026-11-24
-reason = "Обновление лока не закрывает находку, исправления в зависимости ещё нет. Срок записи месяц."
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-rq7h-c2jc-7f22"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-rxp7-6hxx-x8q5"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-vfpm-58rq-9qcg"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-w74x-v6f9-j3xg"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-wjr9-j795-jxcr"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-x5fp-wj9c-mxmx"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-x937-hj6v-793p"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-xhq7-xmqj-769h"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
+
+[[IgnoredVulns]]
+id = "GHSA-xp26-3454-mjgp"
+ignoreUntil = 2026-11-24
+reason = "Обновление лока ломает Contract Tests, разбор отдельной задачей."
