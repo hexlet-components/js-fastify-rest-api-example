@@ -1,0 +1,10 @@
+# Публичные учебные параметры изолированной PostgreSQL и временного сервиса CI.
+# Исключения привязаны к конкретным коммитам и строкам, новые значения проверяются.
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:.env.example:generic-credential-uri:2
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:.github/workflows/contract.yml:generic-credential-uri:42
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:.github/workflows/contract.yml:generic-password:37
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:.github/workflows/nodeci.yml:generic-credential-uri:34
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:.github/workflows/nodeci.yml:generic-password:29
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:README.md:generic-credential-uri:17
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:compose.yaml:generic-credential-uri:25
+61b536c0a930ae0e0de414ebe21dd43d8cbb7b20:compose.yaml:generic-password:6
