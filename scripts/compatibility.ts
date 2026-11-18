@@ -69,6 +69,7 @@ try {
   const result = await getCourse({ client, path: { courseId: 1 } });
   assert.equal(result.response!.status, 200);
   assert.equal(result.data?.id, 1);
+  assert.equal(typeof result.data?.title, "string");
   console.log("Frozen SDK reads current server");
 } finally {
   await app.close();

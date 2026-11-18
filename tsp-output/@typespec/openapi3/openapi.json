@@ -9,6 +9,7 @@
     "/courses": {
       "get": {
         "operationId": "listCourses",
+        "summary": "List courses",
         "parameters": [
           {
             "name": "limit",
@@ -239,6 +240,7 @@
       },
       "post": {
         "operationId": "createCourse",
+        "summary": "Create course",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -451,6 +453,7 @@
     "/courses/{courseId}": {
       "get": {
         "operationId": "getCourse",
+        "summary": "Get course",
         "parameters": [
           {
             "name": "courseId",
@@ -640,6 +643,7 @@
       },
       "patch": {
         "operationId": "updateCourse",
+        "summary": "Update course",
         "parameters": [
           {
             "name": "courseId",
@@ -843,6 +847,7 @@
       },
       "delete": {
         "operationId": "deleteCourse",
+        "summary": "Delete course",
         "parameters": [
           {
             "name": "courseId",
@@ -1031,6 +1036,7 @@
     "/courses/{courseId}/cover": {
       "put": {
         "operationId": "uploadCover",
+        "summary": "Upload cover",
         "parameters": [
           {
             "name": "courseId",
@@ -1235,6 +1241,7 @@
       },
       "get": {
         "operationId": "getCover",
+        "summary": "Get cover",
         "parameters": [
           {
             "name": "courseId",
@@ -1425,6 +1432,7 @@
     "/courses/{courseId}/lessons/{lessonId}": {
       "get": {
         "operationId": "getLesson",
+        "summary": "Get lesson",
         "parameters": [
           {
             "name": "courseId",
@@ -1624,6 +1632,7 @@
     "/courses/{courseId}/publication": {
       "post": {
         "operationId": "publishCourse",
+        "summary": "Publish course",
         "parameters": [
           {
             "name": "courseId",
@@ -1841,6 +1850,7 @@
     "/exports": {
       "post": {
         "operationId": "createExport",
+        "summary": "Create export",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -2068,6 +2078,7 @@
     "/files/{fileId}/content": {
       "get": {
         "operationId": "getFileContent",
+        "summary": "Get file content",
         "parameters": [
           {
             "name": "fileId",
@@ -2259,6 +2270,7 @@
     "/files/{fileId}/download": {
       "get": {
         "operationId": "downloadFile",
+        "summary": "Download file",
         "parameters": [
           {
             "name": "fileId",
@@ -2457,6 +2469,7 @@
     "/me": {
       "get": {
         "operationId": "getMe",
+        "summary": "Get me",
         "parameters": [],
         "responses": {
           "200": {
@@ -2642,6 +2655,7 @@
     "/operations/{operationId}": {
       "get": {
         "operationId": "getOperation",
+        "summary": "Get operation",
         "parameters": [
           {
             "name": "operationId",
@@ -2836,6 +2850,7 @@
     "/operations/{operationId}/result": {
       "get": {
         "operationId": "getExportResult",
+        "summary": "Get export result",
         "parameters": [
           {
             "name": "operationId",
@@ -3038,6 +3053,7 @@
     "/users/{userId}/courses": {
       "get": {
         "operationId": "getUserCourses",
+        "summary": "Get user courses",
         "parameters": [
           {
             "name": "userId",
@@ -3231,6 +3247,7 @@
       },
       "put": {
         "operationId": "replaceUserCourses",
+        "summary": "Replace user courses",
         "parameters": [
           {
             "name": "userId",
@@ -3444,6 +3461,7 @@
     "/users/{userId}/courses/{courseId}": {
       "put": {
         "operationId": "addUserCourse",
+        "summary": "Add user course",
         "parameters": [
           {
             "name": "userId",
@@ -3639,6 +3657,7 @@
       },
       "delete": {
         "operationId": "removeUserCourse",
+        "summary": "Remove user course",
         "parameters": [
           {
             "name": "userId",
