@@ -1,5 +1,7 @@
 # js-fastify-rest-api-example
 
+Пример по новому плану курса находится в [contract-first](./contract-first/README.md). Его зависимости, PostgreSQL и команды запуска описаны отдельно.
+
 REST API на [Fastify](https://fastify.dev/), собранный «по-взрослому»: схема API описана отдельно от кода, база через ORM, валидация по схеме.
 
 ## Зачем это нужно

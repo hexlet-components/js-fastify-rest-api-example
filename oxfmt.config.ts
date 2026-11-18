@@ -27,6 +27,10 @@ export default {
     // с *.gen.ts ещё и index.ts, а i18next-cli пишет типы ресурсов в src/@types.
     "**/*.gen.ts",
     "**/src/types/handlers/**",
+    "contract-first/**/generated/**",
+    "contract-first/baseline/sdk/**",
+    "contract-first/versions/v1/**",
+    "contract-first/versions/v2/**",
     "**/src/@types/**",
   ],
 };

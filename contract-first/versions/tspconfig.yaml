@@ -1,0 +1,9 @@
+output-dir: "{project-root}/tsp-output"
+emit:
+  - "@typespec/openapi3"
+options:
+  "@typespec/openapi3":
+    file-type: json
+    output-file: "{service-name}.json"
+    openapi-versions: ["3.0.0"]
+    seal-object-schemas: true

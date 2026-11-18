@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "test/**/*.ts",
+    "generated/**/*.ts",
+    "baseline/**/*.ts",
+    "starters/**/*.ts",
+    "versions/**/*.ts",
+    "webhooks/**/*.ts"
+  ]
+}
