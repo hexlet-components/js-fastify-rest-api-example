@@ -37,4 +37,5 @@ jobs:
           node-version: 26
       - run: npm ci
       - run: npm test
+      - run: OASDIFF_DOCKER=true npm run compatibility
       - run: git -C .. diff --exit-code -- contract-first/generated contract-first/tsp-output contract-first/starters contract-first/versions contract-first/webhooks
