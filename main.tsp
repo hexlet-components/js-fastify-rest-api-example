@@ -1,397 +1,60 @@
 import "@typespec/http";
-import "@typespec/rest";
-import "@typespec/versioning";
-import "@typespec/openapi3";
 import "@typespec/openapi";
-
-using TypeSpec.Versioning;
+import "@typespec/openapi3";
 using TypeSpec.Http;
 using TypeSpec.OpenAPI;
-
-@service(#{ title: "Rest API Example" })
-@info(#{
-  license: #{
-    name: "ISC",
-    url: "https://opensource.org/license/isc-license-txt",
-  },
-})
-@server("http://localhost:3000", "Локальная разработка")
-@versioned(Versions)
-namespace FastifyRestApiExample;
-
-enum Versions {
-  v1,
-  v2,
+@service(#{title: "Course catalog"})
+namespace Catalog;
+model Problem { type: url; title: string; status: int32; detail: string; }
+@error model Failure {
+  @statusCode statusCode: 400 | 401 | 403 | 404 | 409 | 413 | 415 | 429 | 500;
+  @header contentType: "application/problem+json";
+  @header retryAfter?: string;
+  @body body: Problem;
 }
-
-/**
- * https://www.rfc-editor.org/rfc/rfc9457.html
- */
-@error
-model ProblemDetails {
-  @header("content-type") contentType: "application/problem+json";
-  type?: string;
-  title?: string;
-  status?: integer;
-  detail?: string;
-  instance?: string;
-}
-
-@error
-model BadRequestError {
-  @statusCode _: 400;
-  ...ProblemDetails;
-}
-
-@error
-model TooManyRequestsError {
-  @statusCode _: 429;
-  ...ProblemDetails;
-}
-
-// Эти два исхода возможны почти везде: 400 отдаёт валидация запроса по этой же
-// спеке, 429 — ограничитель частоты. Раньше их не было в контракте вовсе, и
-// клиент по спеке не мог их предусмотреть.
-alias CommonErrors = BadRequestError | TooManyRequestsError;
-
-@error
-model ConflictError {
-  @statusCode _: 409;
-  ...ProblemDetails;
-}
-
-@error
-model PreconditionFailedError {
-  @statusCode _: 412;
-  ...ProblemDetails;
-}
-
-@error
-model NotFoundError {
-  @statusCode _: 404;
-  ...ProblemDetails;
-}
-
-@error
-model UnauthorizedError {
-  @statusCode _: 401;
-  ...ProblemDetails;
-}
-
-@error
-model ForbiddenError {
-  @statusCode _: 403;
-  ...ProblemDetails;
-}
-
-@error
-model UnprocessableEntityError {
-  @statusCode _: 422;
-  ...ProblemDetails;
-  errors: Array<{
-    message: string;
-    rule: string;
-    field: string;
-  }>;
-}
-
-// Ответ списка сообщает, где клиент находится и сколько всего есть. Без этого
-// page уходил в запрос, а обратно не возвращалось ничего: узнать, есть ли
-// следующая страница, было нельзя.
-model PageMeta {
-  page: int32;
-  perPage: int32;
-  total: int32;
-  totalPages: int32;
-}
-
-model Timestamps {
-  // createdAt: utcDateTime;
-}
-
-model User {
-  id: numeric;
-
-  @minLength(2)
-  @maxLength(100)
-  fullName: string | null;
-
-  // Nullable, а не необязательное: колонка добавляется существующей таблице, и
-  // NOT NULL там упёрся бы в уже лежащие строки — как было с password_digest.
-  @added(Versions.v2) phone: string | null;
-
-  // @format("email")
-  email: string;
-
-  ...Timestamps;
-}
-
-model UserCreateDTO {
-  // Границы те же, что у User: иначе запрос принимает имя, которое валидатор
-  // ответа потом забракует, и создание падает в 500.
-  @minLength(2)
-  @maxLength(100)
-  fullName?: string;
-
-  email: string;
-
-  @minLength(8)
-  @secret
-  password: string;
-
-  @added(Versions.v2) phone?: string;
-}
-
-model UserEditDTO {
-  @minLength(2)
-  @maxLength(100)
-  fullName?: string;
-
-  @minLength(8)
-  @secret
-  password?: string;
-
-  @added(Versions.v2) phone?: string;
-}
-
-model Course {
-  id: numeric;
-  name: string;
-  description: string;
-  ...Timestamps;
-}
-
-model CourseCreateDTO {
-  name: string;
-  description: string;
-}
-
-model CourseEditDTO {
-  name?: string;
-  description?: string;
-}
-
-model CourseLesson {
-  id: numeric;
-  courseId: numeric;
-  name: string;
-  body: string;
-  ...Timestamps;
-}
-
-model AuthInfo {
-  email: string;
-
-  @secret
-  password: string;
-}
-
-model TokenInfo {
-  token: string;
-}
-
-model CourseLessonCreateDTO {
-  name: string;
-  body: string;
-}
-
-model CourseLessonEditDTO {
-  name?: string;
-  body?: string;
-}
-
-@route("/users")
-namespace users {
-  @summary("Список пользователей")
-  @operationId("usersIndex")
-  @get
-  @useAuth(BearerAuth)
-  op index(
-    @query @minValue(1) page?: int32 = 1,
-    @query @minValue(1) @maxValue(100) perPage?: int32 = 10,
-  ): {
-    @body users: {
-      data: User[];
-      meta: PageMeta;
-    };
-  } | UnauthorizedError | CommonErrors;
-
-  @summary("Пользователь по идентификатору")
-  @get
-  @useAuth(BearerAuth)
-  @operationId("usersShow")
-  op show(@path @minValue(1) id: int32): {
-    @body _: User;
-  } | NotFoundError | UnauthorizedError | CommonErrors;
-
-  @summary("Регистрация пользователя")
-  @post
-  @operationId("usersCreate")
-  op create(@body _: UserCreateDTO): {
-    @body _: User;
-    @statusCode statusCode: 201;
-  } | UnprocessableEntityError | CommonErrors;
-
-  @summary("Изменение пользователя")
-  @put
-  @useAuth(BearerAuth)
-  @operationId("usersUpdate")
-  op update(@path @minValue(1) id: int32, @body user: UserEditDTO): {
-    @body user: User;
-  } | NotFoundError | UnprocessableEntityError | UnauthorizedError | CommonErrors;
-
-  @summary("Удаление пользователя")
-  @delete
-  @useAuth(BearerAuth)
-  @operationId("usersDestroy")
-  op destroy(@path @minValue(1) id: int32): {
-    @statusCode statusCode: 204;
-  } | NotFoundError | UnauthorizedError | ConflictError | CommonErrors;
-}
-
-@route("/tokens")
-namespace tokens {
-  @summary("Выдача токена по email и паролю")
-  @post
-  @operationId("tokensCreate")
-  op create(@body auth_info: AuthInfo): {
-    @body token: TokenInfo;
-    @statusCode statusCode: 201;
-  } | UnprocessableEntityError | UnauthorizedError | CommonErrors;
-}
-
-@route("/courses")
-namespace courses {
-  @summary("Список курсов")
-  @get
-  @operationId("coursesIndex")
-  op index(
-    @query @minValue(1) page?: int32 = 1,
-    @query @minValue(1) @maxValue(100) perPage?: int32 = 10,
-  ): {
-    @body courses: {
-      data: Course[];
-      meta: PageMeta;
-    };
-  } | CommonErrors;
-
-  @summary("Курс по идентификатору")
-  @get
-  @operationId("coursesShow")
-  op show(@path @minValue(1) id: int32): {
-    @body course: Course;
-  } | NotFoundError | CommonErrors;
-
-  @summary("Создание курса")
-  @post
-  @useAuth(BearerAuth)
-  @operationId("coursesCreate")
-  op create(@body course: CourseCreateDTO): {
-    @body course: Course;
-    @statusCode statusCode: 201;
-  } | UnprocessableEntityError | UnauthorizedError | CommonErrors;
-
-  @summary("Изменение курса")
-  @put
-  @useAuth(BearerAuth)
-  @operationId("coursesUpdate")
-  op update(
-    @path @minValue(1) id: int32,
-    @body course: CourseEditDTO,
-
-    /**
-     * ETag из предыдущего GET. Необязателен; если прислан и запись с тех пор
-     * изменилась, правка отклоняется с 412.
-     */
-    @header("If-Match") ifMatch?: string,
-  ):
-    | {
-        @body course: Course;
-      }
-    | NotFoundError
-    | UnprocessableEntityError
-    | UnauthorizedError
-    | ForbiddenError
-    | PreconditionFailedError
-    | CommonErrors;
-
-  @summary("Удаление курса")
-  @delete
-  @useAuth(BearerAuth)
-  @operationId("coursesDestroy")
-  op destroy(
-    @path @minValue(1) id: int32,
-
-    /** ETag из предыдущего GET; см. update. */
-    @header("If-Match") ifMatch?: string,
-  ):
-    | {
-        @statusCode statusCode: 204;
-      }
-    | NotFoundError
-    | UnauthorizedError
-    | ForbiddenError
-    | PreconditionFailedError
-    | CommonErrors;
-}
-
-@route("/courses/{courseId}/lessons")
-namespace courses_lessons {
-  @summary("Список уроков курса")
-  @get
-  @operationId("coursesLessonsIndex")
-  op index(
-    @path @minValue(1) courseId: int32,
-    @query @minValue(1) page?: int32 = 1,
-    @query @minValue(1) @maxValue(100) perPage?: int32 = 10,
-  ): {
-    @body lessons: {
-      data: CourseLesson[];
-      meta: PageMeta;
-    };
-  } | CommonErrors;
-
-  @summary("Урок курса")
-  @get
-  @operationId("coursesLessonsShow")
-  op show(@path @minValue(1) courseId: int32, @path @minValue(1) id: int32): {
-    @body lessons: CourseLesson;
-  } | NotFoundError | CommonErrors;
-
-  @summary("Добавление урока в курс")
-  @post
-  @useAuth(BearerAuth)
-  @operationId("coursesLessonsCreate")
-  op create(@path @minValue(1) courseId: int32, @body course: CourseLessonCreateDTO): {
-    @body lesson: CourseLesson;
-    @statusCode statusCode: 201;
-  } | UnprocessableEntityError | UnauthorizedError | ForbiddenError | NotFoundError | CommonErrors;
-
-  @summary("Изменение урока")
-  @put
-  @useAuth(BearerAuth)
-  @operationId("coursesLessonsUpdate")
-  op update(
-    @path @minValue(1) courseId: int32,
-    @path @minValue(1) id: int32,
-    @body lesson: CourseLessonEditDTO,
-  ):
-    | {
-        @body lesson: CourseLesson;
-      }
-    | NotFoundError
-    | UnprocessableEntityError
-    | UnauthorizedError
-    | ForbiddenError
-    | PreconditionFailedError
-    | CommonErrors;
-
-  @summary("Удаление урока")
-  @delete
-  @useAuth(BearerAuth)
-  @operationId("coursesLessonsDestroy")
-  op destroy(@path @minValue(1) courseId: int32, @path @minValue(1) id: int32): {
-    @statusCode statusCode: 204;
-  } | NotFoundError | UnauthorizedError | ForbiddenError | CommonErrors;
-}
-
+model CourseInput { @minLength(1) title: string; description?: string | null; }
+model CoursePatch { @minLength(1) title?: string; description?: string | null; }
+model Course { @minLength(1) title: string; description: string | null; @minValue(1) id: int32; ownerId: int32; version: int32; published: boolean; createdAt: utcDateTime; }
+model Collection { data: Course[]; meta: {count: int32}; links: {self: string; next: string | null}; }
+model FileInfo { id: int32; contentType: string; size: int32; downloadUrl: string; }
+model Lesson { id: int32; courseId: int32; title: string; }
+model Principal { id: int32; scopes: string[]; }
+model Operation { id: string; status: "pending" | "running" | "succeeded" | "failed"; resultUrl: string | null; error: Problem | null; }
+@summary("List courses") @route("/courses") @get @operationId("listCourses")
+op listCourses(@query @minValue(1) @maxValue(100) limit?: int32, @query cursor?: string, @query sort?: "id" | "-id", @query title?: string): { @header link?: string; @body body: Collection } | Failure;
+@summary("Get course") @route("/courses/{courseId}") @get @operationId("getCourse")
+op getCourse(@path @minValue(1) courseId: int32): Course | Failure;
+@useAuth(BearerAuth) @summary("Create course") @route("/courses") @post @operationId("createCourse")
+op createCourse(@header("Idempotency-Key") idempotencyKey: string, @body body: CourseInput): { @statusCode statusCode: 201; @header location: string; @body body: Course } | Failure;
+@useAuth(BearerAuth) @summary("Update course") @route("/courses/{courseId}") @patch @operationId("updateCourse")
+op updateCourse(@path courseId: int32, @body body: CoursePatch): Course | Failure;
+@useAuth(BearerAuth) @summary("Delete course") @route("/courses/{courseId}") @delete @operationId("deleteCourse")
+op deleteCourse(@path courseId: int32): { @statusCode statusCode: 204 } | Failure;
+@summary("Get lesson") @route("/courses/{courseId}/lessons/{lessonId}") @get @operationId("getLesson")
+op getLesson(@path courseId: int32, @path lessonId: int32): Lesson | Failure;
+@useAuth(BearerAuth) @summary("Get user courses") @route("/users/{userId}/courses") @get @operationId("getUserCourses")
+op getUserCourses(@path userId: int32): Collection | Failure;
+@useAuth(BearerAuth) @summary("Replace user courses") @route("/users/{userId}/courses") @put @operationId("replaceUserCourses")
+op replaceUserCourses(@path userId: int32, @body body: {courseIds: int32[]}): { @statusCode statusCode: 204 } | Failure;
+@useAuth(BearerAuth) @summary("Add user course") @route("/users/{userId}/courses/{courseId}") @put @operationId("addUserCourse")
+op addUserCourse(@path userId: int32, @path courseId: int32): { @statusCode statusCode: 204 } | Failure;
+@useAuth(BearerAuth) @summary("Remove user course") @route("/users/{userId}/courses/{courseId}") @delete @operationId("removeUserCourse")
+op removeUserCourse(@path userId: int32, @path courseId: int32): { @statusCode statusCode: 204 } | Failure;
+@useAuth(BearerAuth) @summary("Upload cover") @route("/courses/{courseId}/cover") @put @operationId("uploadCover")
+op uploadCover(@path courseId: int32, @header contentType: "image/png", @body body: bytes): { @statusCode statusCode: 201; @body body: FileInfo } | Failure;
+@summary("Get cover") @route("/courses/{courseId}/cover") @get @operationId("getCover")
+op getCover(@path courseId: int32): FileInfo | Failure;
+@summary("Get file content") @route("/files/{fileId}/content") @get @operationId("getFileContent")
+op getFileContent(@path fileId: int32): { @header contentType: "image/png"; @body body: bytes } | Failure;
+@summary("Download file") @route("/files/{fileId}/download") @get @operationId("downloadFile")
+op downloadFile(@path fileId: int32): { @statusCode statusCode: 303; @header location: string; @body body: string } | Failure;
+@useAuth(BearerAuth) @summary("Get me") @route("/me") @get @operationId("getMe")
+op getMe(): Principal | Failure;
+@useAuth(BearerAuth) @summary("Create export") @route("/exports") @post @operationId("createExport")
+op createExport(@header("Idempotency-Key") idempotencyKey: string, @body body: {format: "json" | "csv"}): { @statusCode statusCode: 202; @header location: string; @body body: Operation } | Failure;
+@useAuth(BearerAuth) @summary("Get operation") @route("/operations/{operationId}") @get @operationId("getOperation")
+op getOperation(@path operationId: string): Operation | Failure;
+@useAuth(BearerAuth) @summary("Get export result") @route("/operations/{operationId}/result") @get @operationId("getExportResult")
+op getExportResult(@path operationId: string): { @header contentType: "application/json"; @body body: Course[] } | { @header contentType: "text/csv"; @body body: string } | Failure;
+@useAuth(BearerAuth) @summary("Publish course") @route("/courses/{courseId}/publication") @post @operationId("publishCourse")
+op publishCourse(@path courseId: int32, @body body: {expectedVersion: int32}): Course | Failure;

@@ -1,11 +1,8 @@
 emit:
   - "@typespec/openapi3"
-  # - "@typespec/json-schema"
-
 options:
-  # "@typespec/json-schema":
-  #   file-type: json
-  #   emitAllModels: true
   "@typespec/openapi3":
     file-type: json
-    # emitAllModels: true
+    openapi-versions:
+      - "3.0.0"
+    seal-object-schemas: true

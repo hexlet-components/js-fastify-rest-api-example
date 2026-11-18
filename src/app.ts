@@ -1,160 +1,152 @@
-import { STATUS_CODES } from "node:http";
-import path from "node:path";
-import { httpErrors } from "@fastify/sensible";
-import { eq } from "drizzle-orm";
-import type { AutoloadPluginOptions } from "@fastify/autoload";
-import AutoLoad from "@fastify/autoload";
-import type { FastifyPluginAsync, FastifyRequest, FastifyServerOptions } from "fastify";
+import Fastify, { type FastifyRequest } from "fastify";
 import glue from "fastify-openapi-glue";
-import * as z from "zod";
-import * as schemas from "./db/schema.ts";
-import serviceHandlers from "./routes/index.ts";
-import serviceHandlersV2 from "./routes/v2/index.ts";
+import responseValidator from "@fastify/response-validation";
+import jwt from "@fastify/jwt";
+import rateLimit from "@fastify/rate-limit";
+import addFormats from "ajv-formats";
+import specification from "../tsp-output/@typespec/openapi3/openapi.json" with { type: "json" };
+import { createStore } from "./db.ts";
+import { createHandlers } from "./handlers.ts";
+import { fail, problem, runExports, deliverEvents } from "./services.ts";
 
-export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
-
-// Ключи не проверяются: в колонку уезжают значения, а поля, которых нет в
-// схеме, сериализатор и валидаторы всё равно отбрасывают.
-function containsNul(value: unknown): boolean {
-  if (typeof value === "string") return value.includes("\u0000");
-  if (Array.isArray(value)) return value.some(containsNul);
-  if (value !== null && typeof value === "object") return Object.values(value).some(containsNul);
-  return false;
-}
-
-// Pass --options via CLI arguments in command to enable these options.
-const options: AppOptions = {};
-
-const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
-  // Все модели ошибок в контракте наследуют ProblemDetails (RFC 9457), поэтому
-  // и отдавать их надо в этом виде. Раньше так уходил только ZodError, а
-  // остальное — дефолтным форматом fastify: пока 404 не наступал никогда, это
-  // было незаметно.
-  fastify.setErrorHandler((error: Error & { statusCode?: number }, request, reply) => {
-    if (error instanceof z.ZodError) {
-      const errors = error.issues.map((issue) => ({
-        message: issue.message,
-        rule: issue.code,
-        field: issue.path.map(String).join("."),
-      }));
-      const errorDetail = {
-        status: 422,
-        title: "Validation Error",
-        detail: "Errors related to business logic such as uniqueness",
-        errors,
-      };
-      reply.type("application/problem+json").code(422).send(errorDetail);
-      return;
+export const devSecret = "development-only-secret-change-before-deployment";
+export async function buildServer(
+  options: {
+    databaseUrl?: string;
+    seed?: boolean;
+    rateLimit?: boolean;
+    runJobs?: boolean;
+    failExports?: boolean;
+    webhookUrl?: string;
+  } = {},
+) {
+  // OpenAPI 3.0 nullable references use allOf; Ajv needs an explicit null branch.
+  const runtimeSpecification = structuredClone(specification);
+  function nullable(node: unknown): void {
+    if (!node || typeof node !== "object") return;
+    const object = node as Record<string, any>;
+    for (const value of Object.values(object)) nullable(value);
+    if (object.nullable && object.allOf) {
+      const branch = { ...object };
+      delete branch.nullable;
+      for (const key of Object.keys(object)) delete object[key];
+      object.anyOf = [branch, { type: "object", nullable: true, enum: [null] }];
     }
-
-    const status = typeof error.statusCode === "number" ? error.statusCode : 500;
-    // Текст 5xx наружу не уходит, поэтому причину сохраняем в лог.
-    if (status >= 500) request.log.error(error);
-    reply
-      .type("application/problem+json")
-      .code(status)
-      .send({
-        status,
-        title: STATUS_CODES[status] ?? "Error",
-        // Текст ошибки 5xx наружу не уходит: он может содержать что угодно,
-        // вплоть до фрагмента запроса к базе.
-        detail: status >= 500 ? "Internal Server Error" : error.message,
-      });
-  });
-
-  // Postgres не хранит NUL (U+0000) в text-колонках: строка с ним не
-  // сохраняется в принципе. Без этой проверки такой ввод доезжал до insert и
-  // уходил наружу как 500 — нашёл контрактный прогон, генерируя строки со
-  // спецсимволами. Sqlite такое принимал, поэтому раньше проверки не было.
-  //
-  // Хук общий, а не правило в валидаторах: ограничение не бизнес-правило
-  // конкретной модели, а свойство хранилища, и касается каждого текстового
-  // поля во всех операциях.
-  //
-  // Там же проверяется, что тело вообще пришло. glue описывает тело схемой на
-  // каждый content-type, и fastify выбирает её по заголовку запроса: без
-  // content-type схемы нет, и пустое тело проходит валидацию молча. Флаг
-  // required у requestBody glue при этом отбрасывает, а в контракте каждое
-  // тело обязательное. Такой запрос доезжал до обработчика с body undefined, и
-  // POST /tokens отвечал 500 на обращении к request.body.email.
-  fastify.addHook("preValidation", async (request) => {
-    if (request.routeOptions.schema?.body && request.body === undefined) {
-      throw httpErrors.badRequest("Request body is required");
-    }
-    // Тело, не разобранное как JSON (например text/plain), приходит строкой, схемы
-    // под такой content-type нет, и обработчик падал на request.body.email с 500.
-    // 415 был бы точнее, но в контракте объявлен только 400 для некорректного тела.
-    if (request.routeOptions.schema?.body && typeof request.body !== "object") {
-      throw httpErrors.badRequest("Content-Type must be application/json");
-    }
-    if (containsNul(request.body)) {
-      throw httpErrors.badRequest("Text fields must not contain the NUL character (U+0000)");
-    }
-  });
-
-  fastify.addContentTypeParser(
-    "application/problem+json",
-    { parseAs: "string" },
-    fastify.getDefaultJsonParser("ignore", "ignore"),
-  );
-
-  // This loads all plugins defined in plugins
-  // those should be support plugins that are reused
-  // through your application
-  fastify.register(AutoLoad, {
-    dir: path.join(import.meta.dirname, "plugins"),
-    options: opts,
-  });
-
-  // Авторизацию навешивает glue по `security` из спеки, сопоставляя имя
-  // обработчика с именем схемы (BearerAuth). Руками её писать нельзя: пока
-  // jwtVerify вызывался в каждом обработчике, во всех пяти операциях /users
-  // его забыли, и список, правка и удаление пользователей были открыты.
-  const securityHandlers = {
-    BearerAuth: async (request: FastifyRequest) => {
-      await request.jwtVerify();
-
-      // Токен живёт до истечения срока, а пользователя за это время могли
-      // удалить. Без проверки запрос шёл дальше с идентификатором, которого
-      // в базе нет, и падал на внешнем ключе уже в обработчике.
-      const user = await request.db.query.users.findFirst({
-        columns: { id: true },
-        where: eq(schemas.users.id, request.user.id),
-      });
-      if (!user) {
-        throw httpErrors.unauthorized("Token refers to a user that no longer exists");
-      }
+  }
+  nullable(runtimeSpecification);
+  const app = Fastify({
+    bodyLimit: 1024 * 1024,
+    ajv: {
+      customOptions: { removeAdditional: false, coerceTypes: true },
+      plugins: [
+        (ajv) => {
+          ajv.addKeyword({
+            keyword: "isBuffer",
+            validate: (_schema: boolean, data: unknown) => Buffer.isBuffer(data),
+            errors: false,
+          });
+          return ajv;
+        },
+      ],
     },
-  };
-
-  // Обе версии живут под своим префиксом, включая первую: по адресу видно, к
-  // какой версии обращается клиент. Пути внутри документа OpenAPI префикса не
-  // знают, его навешивает glue при регистрации, поэтому документу нужен
-  // servers с тем же префиксом. Его подставляет plugins/docs.ts при отдаче.
-  fastify.register(glue, {
-    prefix: "/v1",
-    serviceHandlers,
-    securityHandlers,
-    specification: "./tsp-output/@typespec/openapi3/openapi.v1.json",
   });
+  const store = await createStore(options.databaseUrl);
+  app.get("/health", async () => ({ status: "ok" }));
 
-  // v2 отличается от v1 полем phone у User: оно есть в ответах и принимается на
-  // запись. Обработчики курсов, уроков и токенов переиспользуются — расходятся
-  // только пользователи.
-  fastify.register(glue, {
-    prefix: "/v2",
-    serviceHandlers: serviceHandlersV2,
-    securityHandlers,
-    specification: "./tsp-output/@typespec/openapi3/openapi.v2.json",
+  app.setErrorHandler((error, request, reply) => {
+    const status = (error as { statusCode?: number }).statusCode ?? 500;
+    reply
+      .code(status)
+      .type("application/problem+json")
+      .send(problem(status, status >= 500 ? "Internal Server Error" : (error as Error).message));
   });
-
-  // This loads all plugins defined in routes
-  // define your routes in one of these
-  // fastify.register(AutoLoad, {
-  //   dir: path.join(import.meta.dirname, 'routes'),
-  //   options: opts,
-  // });
-};
-
-export default app;
-export { app, options };
+  app.addContentTypeParser("image/png", { parseAs: "buffer" }, (_request, body, done) =>
+    done(null, body),
+  );
+  await app.register(jwt, { secret: process.env.JWT_SECRET ?? devSecret });
+  if (options.rateLimit)
+    await app.register(rateLimit, {
+      hook: "preHandler",
+      global: true,
+      max: 3,
+      timeWindow: 1000,
+      allowList: (request) => request.routeOptions.url !== "/me",
+      keyGenerator: (request) => String(request.user?.id ?? request.ip),
+    });
+  const operations = new Map<string, Record<string, any>>();
+  for (const [path, item] of Object.entries(specification.paths))
+    for (const [method, operation] of Object.entries(item))
+      if (operation && typeof operation === "object")
+        operations.set(`${method.toUpperCase()} ${path.replace(/\{([^}]+)\}/g, ":$1")}`, operation);
+  app.addHook("preValidation", async (request) => {
+    const body = operations.get(`${request.method} ${request.routeOptions.url}`)?.requestBody;
+    if (body?.required && request.body === undefined) fail(400, "Request body is required");
+    if (body && request.body !== undefined) {
+      const contentType = request.headers["content-type"]?.split(";")[0].trim().toLowerCase();
+      if (!body.content[contentType ?? ""]) fail(415, "Unsupported media type");
+    }
+  });
+  app.addHook("onRoute", (route) => {
+    const body = operations.get(
+      `${Array.isArray(route.method) ? route.method[0] : route.method} ${route.url}`,
+    )?.requestBody;
+    if (body?.content?.["image/png"]?.schema?.format === "binary" && route.schema)
+      route.schema.body = { isBuffer: true };
+  });
+  await app.register(responseValidator, {
+    responseStatusCodeValidation: true,
+    ajv: {
+      coerceTypes: false,
+      removeAdditional: false,
+      useDefaults: false,
+      plugins: [addFormats.default],
+    },
+  });
+  await app.register(glue, {
+    specification: runtimeSpecification,
+    serviceHandlers: createHandlers(app, store),
+    securityHandlers: {
+      BearerAuth: async (request: FastifyRequest) => {
+        try {
+          await request.jwtVerify();
+        } catch {
+          fail(401, "Invalid or missing bearer token");
+        }
+        if (!Number.isInteger(request.user.id) || !Array.isArray(request.user.scopes))
+          fail(401, "Invalid token claims");
+      },
+    },
+  });
+  app.get("/openapi.json", async () => specification);
+  app.get("/docs", async (_request, reply) =>
+    reply
+      .type("text/html")
+      .send(
+        '<!doctype html><html><head><title>Catalog API</title></head><body><a href="/openapi.json">OpenAPI</a><script id="api-reference" data-url="/openapi.json"></script><script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script></body></html>',
+      ),
+  );
+  if (options.seed !== false) await store.seed();
+  let running: Promise<void> | undefined;
+  const timer = options.runJobs
+    ? setInterval(() => {
+        if (running) return;
+        running = runExports(store, options.failExports)
+          .then(() =>
+            options.webhookUrl
+              ? deliverEvents(store, options.webhookUrl, process.env.WEBHOOK_SECRET ?? devSecret)
+              : undefined,
+          )
+          .catch((error) => app.log.error(error))
+          .finally(() => {
+            running = undefined;
+          });
+      }, 100)
+    : undefined;
+  app.addHook("onClose", async () => {
+    if (timer) clearInterval(timer);
+    await running;
+    await store.close();
+  });
+  await app.ready();
+  return app;
+}

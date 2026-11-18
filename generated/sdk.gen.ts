@@ -18,8 +18,14 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
     meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
 
+/**
+ * List courses
+ */
 export const listCourses = <ThrowOnError extends boolean = false>(options?: Options<ListCoursesData, ThrowOnError>): RequestResult<ListCoursesResponses, ListCoursesErrors, ThrowOnError> => (options?.client ?? client).get<ListCoursesResponses, ListCoursesErrors, ThrowOnError>({ url: '/courses', ...options });
 
+/**
+ * Create course
+ */
 export const createCourse = <ThrowOnError extends boolean = false>(options: Options<CreateCourseData, ThrowOnError>): RequestResult<CreateCourseResponses, CreateCourseErrors, ThrowOnError> => (options.client ?? client).post<CreateCourseResponses, CreateCourseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/courses',
@@ -30,14 +36,23 @@ export const createCourse = <ThrowOnError extends boolean = false>(options: Opti
     }
 });
 
+/**
+ * Delete course
+ */
 export const deleteCourse = <ThrowOnError extends boolean = false>(options: Options<DeleteCourseData, ThrowOnError>): RequestResult<DeleteCourseResponses, DeleteCourseErrors, ThrowOnError> => (options.client ?? client).delete<DeleteCourseResponses, DeleteCourseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/courses/{courseId}',
     ...options
 });
 
+/**
+ * Get course
+ */
 export const getCourse = <ThrowOnError extends boolean = false>(options: Options<GetCourseData, ThrowOnError>): RequestResult<GetCourseResponses, GetCourseErrors, ThrowOnError> => (options.client ?? client).get<GetCourseResponses, GetCourseErrors, ThrowOnError>({ url: '/courses/{courseId}', ...options });
 
+/**
+ * Update course
+ */
 export const updateCourse = <ThrowOnError extends boolean = false>(options: Options<UpdateCourseData, ThrowOnError>): RequestResult<UpdateCourseResponses, UpdateCourseErrors, ThrowOnError> => (options.client ?? client).patch<UpdateCourseResponses, UpdateCourseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/courses/{courseId}',
@@ -48,8 +63,14 @@ export const updateCourse = <ThrowOnError extends boolean = false>(options: Opti
     }
 });
 
+/**
+ * Get cover
+ */
 export const getCover = <ThrowOnError extends boolean = false>(options: Options<GetCoverData, ThrowOnError>): RequestResult<GetCoverResponses, GetCoverErrors, ThrowOnError> => (options.client ?? client).get<GetCoverResponses, GetCoverErrors, ThrowOnError>({ url: '/courses/{courseId}/cover', ...options });
 
+/**
+ * Upload cover
+ */
 export const uploadCover = <ThrowOnError extends boolean = false>(options: Options<UploadCoverData, ThrowOnError>): RequestResult<UploadCoverResponses, UploadCoverErrors, ThrowOnError> => (options.client ?? client).put<UploadCoverResponses, UploadCoverErrors, ThrowOnError>({
     bodySerializer: null,
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -61,8 +82,14 @@ export const uploadCover = <ThrowOnError extends boolean = false>(options: Optio
     }
 });
 
+/**
+ * Get lesson
+ */
 export const getLesson = <ThrowOnError extends boolean = false>(options: Options<GetLessonData, ThrowOnError>): RequestResult<GetLessonResponses, GetLessonErrors, ThrowOnError> => (options.client ?? client).get<GetLessonResponses, GetLessonErrors, ThrowOnError>({ url: '/courses/{courseId}/lessons/{lessonId}', ...options });
 
+/**
+ * Publish course
+ */
 export const publishCourse = <ThrowOnError extends boolean = false>(options: Options<PublishCourseData, ThrowOnError>): RequestResult<PublishCourseResponses, PublishCourseErrors, ThrowOnError> => (options.client ?? client).post<PublishCourseResponses, PublishCourseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/courses/{courseId}/publication',
@@ -73,6 +100,9 @@ export const publishCourse = <ThrowOnError extends boolean = false>(options: Opt
     }
 });
 
+/**
+ * Create export
+ */
 export const createExport = <ThrowOnError extends boolean = false>(options: Options<CreateExportData, ThrowOnError>): RequestResult<CreateExportResponses, CreateExportErrors, ThrowOnError> => (options.client ?? client).post<CreateExportResponses, CreateExportErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/exports',
@@ -83,34 +113,55 @@ export const createExport = <ThrowOnError extends boolean = false>(options: Opti
     }
 });
 
+/**
+ * Get file content
+ */
 export const getFileContent = <ThrowOnError extends boolean = false>(options: Options<GetFileContentData, ThrowOnError>): RequestResult<GetFileContentResponses, GetFileContentErrors, ThrowOnError> => (options.client ?? client).get<GetFileContentResponses, GetFileContentErrors, ThrowOnError>({ url: '/files/{fileId}/content', ...options });
 
+/**
+ * Download file
+ */
 export const downloadFile = <ThrowOnError extends boolean = false>(options: Options<DownloadFileData, ThrowOnError>): RequestResult<unknown, DownloadFileErrors, ThrowOnError> => (options.client ?? client).get<unknown, DownloadFileErrors, ThrowOnError>({ url: '/files/{fileId}/download', ...options });
 
+/**
+ * Get me
+ */
 export const getMe = <ThrowOnError extends boolean = false>(options?: Options<GetMeData, ThrowOnError>): RequestResult<GetMeResponses, GetMeErrors, ThrowOnError> => (options?.client ?? client).get<GetMeResponses, GetMeErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/me',
     ...options
 });
 
+/**
+ * Get operation
+ */
 export const getOperation = <ThrowOnError extends boolean = false>(options: Options<GetOperationData, ThrowOnError>): RequestResult<GetOperationResponses, GetOperationErrors, ThrowOnError> => (options.client ?? client).get<GetOperationResponses, GetOperationErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/operations/{operationId}',
     ...options
 });
 
+/**
+ * Get export result
+ */
 export const getExportResult = <ThrowOnError extends boolean = false>(options: Options<GetExportResultData, ThrowOnError>): RequestResult<GetExportResultResponses, GetExportResultErrors, ThrowOnError> => (options.client ?? client).get<GetExportResultResponses, GetExportResultErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/operations/{operationId}/result',
     ...options
 });
 
+/**
+ * Get user courses
+ */
 export const getUserCourses = <ThrowOnError extends boolean = false>(options: Options<GetUserCoursesData, ThrowOnError>): RequestResult<GetUserCoursesResponses, GetUserCoursesErrors, ThrowOnError> => (options.client ?? client).get<GetUserCoursesResponses, GetUserCoursesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/users/{userId}/courses',
     ...options
 });
 
+/**
+ * Replace user courses
+ */
 export const replaceUserCourses = <ThrowOnError extends boolean = false>(options: Options<ReplaceUserCoursesData, ThrowOnError>): RequestResult<ReplaceUserCoursesResponses, ReplaceUserCoursesErrors, ThrowOnError> => (options.client ?? client).put<ReplaceUserCoursesResponses, ReplaceUserCoursesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/users/{userId}/courses',
@@ -121,12 +172,18 @@ export const replaceUserCourses = <ThrowOnError extends boolean = false>(options
     }
 });
 
+/**
+ * Remove user course
+ */
 export const removeUserCourse = <ThrowOnError extends boolean = false>(options: Options<RemoveUserCourseData, ThrowOnError>): RequestResult<RemoveUserCourseResponses, RemoveUserCourseErrors, ThrowOnError> => (options.client ?? client).delete<RemoveUserCourseResponses, RemoveUserCourseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/users/{userId}/courses/{courseId}',
     ...options
 });
 
+/**
+ * Add user course
+ */
 export const addUserCourse = <ThrowOnError extends boolean = false>(options: Options<AddUserCourseData, ThrowOnError>): RequestResult<AddUserCourseResponses, AddUserCourseErrors, ThrowOnError> => (options.client ?? client).put<AddUserCourseResponses, AddUserCourseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/users/{userId}/courses/{courseId}',
