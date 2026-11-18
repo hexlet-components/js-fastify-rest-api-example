@@ -21,6 +21,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    services:
+      postgres:
+        image: postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc
+        env:
+          POSTGRES_USER: catalog
+          POSTGRES_PASSWORD: catalog
+          POSTGRES_DB: catalog
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U catalog" --health-interval 1s --health-timeout 3s --health-retries 30
+    env:
+      DATABASE_URL: postgres://catalog:catalog@localhost:5432/catalog
+
     strategy:
       matrix:
         node-version: [ 26.x ]
@@ -47,9 +59,10 @@ jobs:
       # руками.
       - name: Check generated code
         run: make generate-check
-      # Схема без миграции — молчаливая поломка: код ждёт колонку, которой в
-      # базе не появится.
-      - name: Check migrations
+      # Готовая начальная миграция применяется повторно без очистки данных.
+      - name: Apply initial migration
         run: make migration-check
       - name: Run tests
-        run: make test-coverage
+        run: make test
+      - name: Check old client and OpenAPI
+        run: OASDIFF_DOCKER=true make compatibility-test

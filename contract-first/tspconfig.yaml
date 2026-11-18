@@ -1,8 +1,0 @@
-emit:
-  - "@typespec/openapi3"
-options:
-  "@typespec/openapi3":
-    file-type: json
-    openapi-versions:
-      - "3.0.0"
-    seal-object-schemas: true

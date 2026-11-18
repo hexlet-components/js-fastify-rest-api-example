@@ -1,24 +1,36 @@
-# Локальный запуск собранного образа. Базы отдельным сервисом нет: PGlite —
-# postgres в wasm — живёт в памяти процесса и пересоздаётся при каждом старте.
 services:
+  db:
+    image: postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc
+    environment:
+      POSTGRES_USER: catalog
+      POSTGRES_PASSWORD: catalog
+      POSTGRES_DB: catalog
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - catalog-pg:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catalog"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
   api:
+    profiles: ["app"]
     build: .
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
-      # Значение только для локального запуска — оно лежит в публичном
-      # репозитории. В прод секрет приходит из окружения.
-      JWT_SECRET: dev-only-secret-do-not-use-in-production
       NODE_ENV: production
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://catalog:catalog@db:5432/catalog
+      JWT_SECRET: development-only-secret-change-before-deployment
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
-      # Тот же /health, что опрашивает оркестратор. curl в slim-образе нет,
-      # поэтому проверка идёт нодой.
-      test:
-        - CMD
-        - node
-        - -e
-        - "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
-      interval: 10s
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 2s
       timeout: 3s
-      retries: 5
-      start_period: 10s
+      retries: 30
+volumes:
+  catalog-pg:

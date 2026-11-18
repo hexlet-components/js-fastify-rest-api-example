@@ -1,23 +1,21 @@
 {
   "compilerOptions": {
-    "skipLibCheck": true,
-    "allowJs": false,
-    "noImplicitAny": true,
-    "checkJs": false,
     "strict": true,
+    "skipLibCheck": true,
+    "target": "esnext",
+    "module": "nodenext",
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "moduleResolution": "NodeNext",
-    "allowSyntheticDefaultImports": true,
-    "module": "NodeNext",
-    "esModuleInterop": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "erasableSyntaxOnly": true
   },
-  // Тесты включены наряду с src намеренно. Генератор fastify оставляет в
-  // include только src/**/*.ts, но тогда tsc не проверяет тесты — а именно там
-  // он поймал, что build() из хелпера fastify-cli нетипизирован и весь app в
-  // тестах был any.
-  "include": ["src/**/*.ts", "test/**/*.ts", "*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "test/**/*.ts",
+    "generated/**/*.ts",
+    "baseline/**/*.ts",
+    "starters/**/*.ts",
+    "versions/**/*.ts",
+    "webhooks/**/*.ts"
+  ]
 }
